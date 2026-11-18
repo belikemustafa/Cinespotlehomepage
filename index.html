@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineSpotle — Guess the Universe</title>
+
+  <!-- Modern Google Fonts: Plus Jakarta Sans (Headings) & Inter (Body/UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['"Inter"', 'sans-serif'],
+          },
+          colors: {
+            cosmic: {
+              950: '#06070d',
+              900: '#0b0d17',
+              800: '#131728',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-blur: 8px;
+      --aura-color: rgba(245, 185, 95, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background-color: #06070d;
+      color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Background Media Wrapper with Soft Blur & Scale to Prevent Edge Halos */
+    .bg-media-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 50%, #12101c 0%, #06070d 100%);
+    }
+
+    .bg-media-filtered {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      filter: blur(var(--bg-blur)) brightness(0.76) saturate(1.18);
+      transform: scale(1.07);
+      transition: filter 0.2s ease-out;
+      will-change: filter, transform;
+    }
+
+    #bg-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    #bg-video.is-ready {
+      opacity: 1;
+    }
+
+    #cosmos-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Dark Cosmic Vignette Overlay for Effortless Legibility */
+    .cosmic-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(6, 7, 13, 0.22) 0%, rgba(6, 7, 13, 0.68) 72%, rgba(4, 5, 10, 0.88) 100%),
+        linear-gradient(180deg, rgba(6, 7, 13, 0.45) 0%, rgba(6, 7, 13, 0.15) 45%, rgba(6, 7, 13, 0.72) 100%);
+    }
+
+    /* Interactive Cursor Aura */
+    #cursor-aura {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 520px;
+      height: 520px;
+      border-radius: 9999px;
+      pointer-events: none;
+      z-index: 2;
+      background: radial-gradient(circle, var(--aura-color) 0%, rgba(245, 185, 95, 0) 68%);
+      transform: translate3d(-50%, -50%, 0);
+      transition: background 0.45s ease, opacity 0.4s ease;
+      opacity: 0;
+      will-change: transform;
+    }
+
+    /* Portal Cards: Glassmorphism, Pop-up Spring Hover & 3D Tilt */
+    .portal-card {
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      --tilt-x: 0deg;
+      --tilt-y: 0deg;
+      --accent-rgb: 245, 158, 11;
+      --accent-secondary-rgb: 251, 191, 36;
+
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 1.5rem;
+      background: linear-gradient(
+        155deg,
+        rgba(22, 26, 44, 0.62) 0%,
+        rgba(12, 15, 27, 0.76) 100%
+      );
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow:
+        0 18px 40px -15px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+      transform-style: preserve-3d;
+      transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(0px) scale(1);
+      transition:
+        transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.35s ease,
+        box-shadow 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.35s ease;
+      will-change: transform, box-shadow;
+      text-decoration: none;
+      overflow: hidden;
+    }
+
+    /* Hover & Active Roulette Pop-Up State */
+    .portal-card:hover,
+    .portal-card:focus-visible,
+    .portal-card.is-highlighted {
+      transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-12px) scale(1.035);
+      border-color: rgba(var(--accent-rgb), 0.68);
+      background: linear-gradient(
+        155deg,
+        rgba(30, 35, 58, 0.76) 0%,
+        rgba(15, 18, 33, 0.86) 100%
+      );
+      box-shadow:
+        0 28px 55px -12px rgba(0, 0, 0, 0.78),
+        0 14px 36px -6px rgba(var(--accent-rgb), 0.34),
+        0 0 0 1px rgba(var(--accent-rgb), 0.25),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.24);
+      outline: none;
+    }
+
+    .portal-card:active {
+      transform: perspective(1000px) translateY(-6px) scale(1.01);
+      transition-duration: 0.12s;
+    }
+
+    /* Mouse-Tracking Radial Spotlight Sheen */
+    .portal-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(
+        340px circle at var(--mouse-x) var(--mouse-y),
+        rgba(var(--accent-secondary-rgb), 0.22),
+        rgba(var(--accent-rgb), 0.08) 42%,
+        transparent 75%
+      );
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .portal-card:hover::before,
+    .portal-card:focus-visible::before,
+    .portal-card.is-highlighted::before {
+      opacity: 1;
+    }
+
+    /* Ambient Bottom Rim Glow Inside Card */
+    .portal-card::after {
+      content: '';
+      position: absolute;
+      left: 14%;
+      right: 14%;
+      bottom: -1px;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(var(--accent-secondary-rgb), 0.95),
+        transparent
+      );
+      opacity: 0;
+      transform: scaleX(0.4);
+      transition: opacity 0.35s ease, transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .portal-card:hover::after,
+    .portal-card:focus-visible::after,
+    .portal-card.is-highlighted::after {
+      opacity: 1;
+      transform: scaleX(1);
+    }
+
+    /* Card Theme Accents */
+    .card-movies {
+      --accent-rgb: 245, 158, 11;
+      --accent-secondary-rgb: 252, 211, 77;
+    }
+
+    .card-music {
+      --accent-rgb: 139, 92, 246;
+      --accent-secondary-rgb: 34, 211, 238;
+    }
+
+    .card-pokemon {
+      --accent-rgb: 244, 63, 94;
+      --accent-secondary-rgb: 251, 146, 60;
+    }
+
+    /* Icon Container Pop on Card Hover */
+    .portal-icon-wrap {
+      transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+
+    .portal-card:hover .portal-icon-wrap,
+    .portal-card:focus-visible .portal-icon-wrap,
+    .portal-card.is-highlighted .portal-icon-wrap {
+      transform: translateY(-3px) scale(1.08);
+    }
+
+    /* Arrow Pill Animation */
+    .portal-arrow {
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .portal-card:hover .portal-arrow,
+    .portal-card:focus-visible .portal-arrow,
+    .portal-card.is-highlighted .portal-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Entrance Stagger Animation */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-hero {
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .animate-card-1 {
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+    }
+
+    .animate-card-2 {
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+    }
+
+    .animate-card-3 {
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+    }
+
+    .animate-footer {
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+    }
+
+    /* Custom Range Slider for Blur Pill */
+    input[type='range'].blur-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 78px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type='range'].blur-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.65);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    input[type='range'].blur-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    input[type='range'].blur-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: none;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.65);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between selection:bg-amber-400/30 selection:text-amber-100">
+
+  <!-- Full-Viewport Blurred Background Layer (Video + Seamless Milky Way Canvas Fallback) -->
+  <div class="bg-media-layer" aria-hidden="true">
+    <div class="bg-media-filtered" id="bg-blur-container">
+      <!-- Animated Milky Way & Starfield Canvas Fallback -->
+      <canvas id="cosmos-canvas"></canvas>
+
+      <!-- Full-Viewport Background Video -->
+      <video
+        id="bg-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        src="video_1.mp4"
+      ></video>
+    </div>
+  </div>
+
+  <!-- Dark Cosmic Vignette Overlay -->
+  <div class="cosmic-vignette" aria-hidden="true"></div>
+
+  <!-- Subtle Interactive Cursor Aura -->
+  <div id="cursor-aura" aria-hidden="true"></div>
+
+  <!-- Interactive Sparkle Canvas (Top-Level Pointer Feedback) -->
+  <canvas
+    id="sparkle-canvas"
+    class="fixed inset-0 z-[3] pointer-events-none"
+    aria-hidden="true"
+  ></canvas>
+
+  <!-- Main Centered Hero & 3 Portal Buttons -->
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-5 sm:px-8 py-14 sm:py-16">
+    <!-- Brand Header / Hero -->
+    <header class="text-center max-w-2xl mx-auto mb-10 sm:mb-12 animate-hero">
+      <!-- Subtle Cosmic Pill Badge -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.11] backdrop-blur-md text-xs font-medium text-slate-300 mb-5 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_8px_rgba(251,191,36,0.9)]"></span>
+        <span>Daily Guessing Hub</span>
+      </div>
+
+      <!-- CineSpotle Wordmark & Custom Emblem -->
+      <div class="flex items-center justify-center gap-3.5 mb-4">
+        <div class="relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-amber-400/25 via-amber-500/10 to-purple-500/20 border border-amber-300/35 shadow-[0_0_30px_rgba(245,158,11,0.28)]">
+          <!-- Custom CineSpotle Spotlight Aperture SVG -->
+          <svg class="w-6 h-6 sm:w-7 sm:h-7 text-amber-300" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="14" cy="14" r="10.5" stroke="currentColor" stroke-width="1.75" stroke-opacity="0.85" />
+            <circle cx="14" cy="14" r="4.2" fill="currentColor" />
+            <path d="M14 2.5V6M14 22V25.5M2.5 14H6M22 14H25.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            <circle cx="19.5" cy="8.5" r="1.3" fill="#FDE68A" />
+          </svg>
+        </div>
+
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white">
+          Cine<span class="bg-gradient-to-r from-amber-200 via-amber-400 to-orange-400 bg-clip-text text-transparent">Spotle</span>
+        </h1>
+      </div>
+
+      <!-- Welcoming Subtitle -->
+      <p class="text-base sm:text-lg text-slate-300/90 font-normal leading-relaxed max-w-lg mx-auto">
+        Pick a universe and test your guessing instincts.
+      </p>
+    </header>
+
+    <!-- 3 Interactive Portal Buttons Grid -->
+    <section
+      aria-label="Game Universes"
+      class="w-full grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-7"
+    >
+      <!-- Portal 1: Movies, TV Series and Anime -->
+      <a
+        id="portal-1"
+        href="https://movies-5dw.pages.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-index="1"
+        data-name="Movies, TV Series and Anime"
+        data-aura="rgba(245, 158, 11, 0.18)"
+        class="portal-card card-movies group p-6 sm:p-7 min-h-[220px] sm:min-h-[248px] animate-card-1"
+      >
+        <div class="relative z-10 flex items-start justify-between gap-4">
+          <!-- Film / TV / Anime Custom Icon -->
+          <div class="portal-icon-wrap w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-amber-400/15 border border-amber-300/30 flex items-center justify-center text-amber-300 shadow-[0_8px_24px_rgba(245,158,11,0.2)]">
+            <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3.5" y="5.5" width="21" height="17" rx="3.5" stroke="currentColor" stroke-width="1.8" />
+              <path d="M8.5 5.5V22.5M19.5 5.5V22.5M3.5 10.5H8.5M3.5 17.5H8.5M19.5 10.5H24.5M19.5 17.5H24.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M12.3 11.2L17.2 14L12.3 16.8V11.2Z" fill="currentColor" />
+            </svg>
+          </div>
+
+          <!-- Keyboard Shortcut Badge -->
+          <span
+            title="Press key 1 to launch"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.07] border border-white/[0.12] text-xs font-semibold text-slate-300 group-hover:border-amber-300/40 group-hover:text-amber-200 transition-colors"
+          >
+            1
+          </span>
+        </div>
+
+        <div class="relative z-10 mt-6">
+          <h2 class="font-display text-xl sm:text-[1.32rem] font-bold text-white tracking-tight group-hover:text-amber-100 transition-colors">
+            Movies, TV Series and Anime
+          </h2>
+          <p class="mt-1.5 text-sm text-slate-300/80 leading-relaxed line-clamp-1">
+            Guess iconic films, hit shows &amp; legendary anime.
+          </p>
+
+          <div class="mt-5 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-medium text-amber-300/90">
+            <span class="tracking-wide uppercase text-[11px] font-semibold">Enter Cinema</span>
+            <span class="portal-arrow inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-400/15 text-amber-300 group-hover:bg-amber-400 group-hover:text-slate-950">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Portal 2: Songs and Music -->
+      <a
+        id="portal-2"
+        href="https://songs-cgx.pages.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-index="2"
+        data-name="Songs and Music"
+        data-aura="rgba(139, 92, 246, 0.2)"
+        class="portal-card card-music group p-6 sm:p-7 min-h-[220px] sm:min-h-[248px] animate-card-2"
+      >
+        <div class="relative z-10 flex items-start justify-between gap-4">
+          <!-- Songs & Music Waveform Custom Icon -->
+          <div class="portal-icon-wrap w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-violet-500/15 border border-violet-300/30 flex items-center justify-center text-cyan-300 shadow-[0_8px_24px_rgba(139,92,246,0.22)]">
+            <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M9.5 8.5V19.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M14 5V23" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M18.5 9.5V18.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              <path d="M23 12V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+          </div>
+
+          <!-- Keyboard Shortcut Badge -->
+          <span
+            title="Press key 2 to launch"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.07] border border-white/[0.12] text-xs font-semibold text-slate-300 group-hover:border-cyan-300/40 group-hover:text-cyan-200 transition-colors"
+          >
+            2
+          </span>
+        </div>
+
+        <div class="relative z-10 mt-6">
+          <h2 class="font-display text-xl sm:text-[1.32rem] font-bold text-white tracking-tight group-hover:text-cyan-100 transition-colors">
+            Songs and Music
+          </h2>
+          <p class="mt-1.5 text-sm text-slate-300/80 leading-relaxed line-clamp-1">
+            Identify chart-toppers, albums &amp; timeless tracks.
+          </p>
+
+          <div class="mt-5 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-medium text-cyan-300/90">
+            <span class="tracking-wide uppercase text-[11px] font-semibold">Enter Studio</span>
+            <span class="portal-arrow inline-flex items-center justify-center w-7 h-7 rounded-full bg-violet-400/20 text-cyan-300 group-hover:bg-cyan-300 group-hover:text-slate-950">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Portal 3: Pokemon -->
+      <a
+        id="portal-3"
+        href="https://pokemon-1au.pages.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-index="3"
+        data-name="Pokemon"
+        data-aura="rgba(244, 63, 94, 0.19)"
+        class="portal-card card-pokemon group p-6 sm:p-7 min-h-[220px] sm:min-h-[248px] animate-card-3"
+      >
+        <div class="relative z-10 flex items-start justify-between gap-4">
+          <!-- Poké-Inspired Geometric Emblem SVG -->
+          <div class="portal-icon-wrap w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-rose-500/15 border border-rose-300/30 flex items-center justify-center text-rose-300 shadow-[0_8px_24px_rgba(244,63,94,0.22)]">
+            <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="14" cy="14" r="10" stroke="currentColor" stroke-width="1.8" />
+              <path d="M4.2 14H10.5M17.5 14H23.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              <circle cx="14" cy="14" r="3.4" stroke="currentColor" stroke-width="1.8" />
+              <circle cx="14" cy="14" r="1.3" fill="currentColor" />
+            </svg>
+          </div>
+
+          <!-- Keyboard Shortcut Badge -->
+          <span
+            title="Press key 3 to launch"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.07] border border-white/[0.12] text-xs font-semibold text-slate-300 group-hover:border-rose-300/40 group-hover:text-rose-200 transition-colors"
+          >
+            3
+          </span>
+        </div>
+
+        <div class="relative z-10 mt-6">
+          <h2 class="font-display text-xl sm:text-[1.32rem] font-bold text-white tracking-tight group-hover:text-rose-100 transition-colors">
+            Pokemon
+          </h2>
+          <p class="mt-1.5 text-sm text-slate-300/80 leading-relaxed line-clamp-1">
+            Name every silhouette, type &amp; classic creature.
+          </p>
+
+          <div class="mt-5 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-medium text-rose-300/90">
+            <span class="tracking-wide uppercase text-[11px] font-semibold">Enter Arena</span>
+            <span class="portal-arrow inline-flex items-center justify-center w-7 h-7 rounded-full bg-rose-400/15 text-rose-300 group-hover:bg-rose-400 group-hover:text-slate-950">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+    </section>
+
+    <!-- Secondary Interactive Action: Shuffle & Play Pill + Keyboard Hint -->
+    <div class="mt-9 sm:mt-11 flex flex-col items-center gap-3 animate-footer">
+      <button
+        id="shuffle-btn"
+        type="button"
+        class="group inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/[0.07] hover:bg-white/[0.13] active:scale-[0.97] border border-white/[0.14] hover:border-amber-300/40 backdrop-blur-md text-sm font-medium text-slate-200 hover:text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-200 cursor-pointer"
+      >
+        <svg
+          id="shuffle-icon"
+          class="w-4 h-4 text-amber-300 transition-transform duration-500 group-hover:rotate-180"
+          viewBox="0 0 20 20"
+          fill="none"
+        >
+          <path
+            d="M14 3H17M17 3V6M17 3L12.5 7.5M3 14L7.5 9.5M14 17H17M17 17V14M17 17L3 3"
+            stroke="currentColor"
+            stroke-width="1.65"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>Shuffle &amp; Play</span>
+      </button>
+
+      <p class="hidden sm:block text-xs text-slate-400/80">
+        Tip: Press <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">1</kbd>,
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">2</kbd>, or
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">3</kbd> on your keyboard to jump right in.
+      </p>
+    </div>
+  </main>
+
+  <!-- Minimal Status Toast (Replaces any alert() dialogs cleanly) -->
+  <div
+    id="status-toast"
+    role="status"
+    aria-live="polite"
+    class="fixed top-5 left-1/2 -translate-x-1/2 z-30 pointer-events-none opacity-0 -translate-y-3 transition-all duration-300"
+  >
+    <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/90 border border-white/15 backdrop-blur-xl text-xs sm:text-sm font-medium text-slate-100 shadow-2xl">
+      <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+      <span id="status-toast-text">Launching portal...</span>
+    </div>
+  </div>
+
+  <!-- Sleek Minimal Floating Control Pill (Bottom-Right) -->
+  <aside
+    aria-label="Backdrop Controls"
+    class="fixed bottom-4 right-4 z-20 flex items-center gap-2.5 px-3.5 py-2 rounded-full bg-slate-950/70 hover:bg-slate-950/85 border border-white/[0.12] backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-xs text-slate-300 transition-colors"
+  >
+    <label for="blur-slider" class="inline-flex items-center gap-1.5 cursor-pointer select-none text-slate-300/90 font-medium">
+      <svg class="w-3.5 h-3.5 text-amber-300/90" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="3.2" stroke="currentColor" stroke-width="1.5" />
+        <circle cx="9" cy="9" r="6.8" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2.4" />
+      </svg>
+      <span>Blur</span>
+    </label>
+
+    <input
+      id="blur-slider"
+      type="range"
+      min="0"
+      max="18"
+      step="1"
+      value="8"
+      aria-label="Background blur level"
+      class="blur-slider"
+    />
+
+    <span id="blur-value" class="w-7 text-right tabular-nums text-[11px] font-semibold text-amber-200/90">8px</span>
+
+    <span class="h-3.5 w-px bg-white/15" aria-hidden="true"></span>
+
+    <!-- Optional Local Video Loader -->
+    <label
+      for="video-file-input"
+      title="Load a local background video file"
+      class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/[0.06] hover:bg-white/[0.14] text-slate-200 hover:text-white cursor-pointer transition-colors"
+    >
+      <svg class="w-3.5 h-3.5 text-amber-300" viewBox="0 0 18 18" fill="none">
+        <rect x="2.5" y="4" width="9.5" height="10" rx="2" stroke="currentColor" stroke-width="1.4" />
+        <path d="M12 7.3L15.5 5.3V12.7L12 10.7V7.3Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+      </svg>
+      <span class="hidden sm:inline font-medium">Video</span>
+    </label>
+    <input
+      id="video-file-input"
+      type="file"
+      accept="video/*"
+      class="hidden"
+    />
+  </aside>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // 1. Toast Notification Helper
+      // =========================================================================
+      const toastEl = document.getElementById('status-toast');
+      const toastTextEl = document.getElementById('status-toast-text');
+      let toastTimer = null;
+
+      function showToast(message, duration = 2200) {
+        if (!toastEl || !toastTextEl) return;
+        toastTextEl.textContent = message;
+        toastEl.classList.remove('opacity-0', '-translate-y-3');
+        toastEl.classList.add('opacity-100', 'translate-y-0');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toastEl.classList.add('opacity-0', '-translate-y-3');
+          toastEl.classList.remove('opacity-100', 'translate-y-0');
+        }, duration);
+      }
+
+      // =========================================================================
+      // 2. Background Video & Live Blur Slider + Local Video Preview
+      // =========================================================================
+      const bgVideo = document.getElementById('bg-video');
+      const blurSlider = document.getElementById('blur-slider');
+      const blurValue = document.getElementById('blur-value');
+      const videoFileInput = document.getElementById('video-file-input');
+
+      if (bgVideo) {
+        bgVideo.addEventListener('loadeddata', () => {
+          bgVideo.classList.add('is-ready');
+        });
+        bgVideo.addEventListener('error', () => {
+          // Gracefully keep the animated Milky Way canvas visible if video_1.mp4 isn't present
+          bgVideo.classList.remove('is-ready');
+        });
+        // Attempt playback cleanly
+        const playPromise = bgVideo.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch(() => {
+            // Autoplay blocked or missing file; canvas backdrop handles seamlessly
+          });
+        }
+      }
+
+      if (blurSlider && blurValue) {
+        blurSlider.addEventListener('input', (e) => {
+          const px = `${e.target.value}px`;
+          document.documentElement.style.setProperty('--bg-blur', px);
+          blurValue.textContent = px;
+        });
+      }
+
+      if (videoFileInput && bgVideo) {
+        videoFileInput.addEventListener('change', (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          try {
+            const objectUrl = URL.createObjectURL(file);
+            bgVideo.src = objectUrl;
+            bgVideo.classList.add('is-ready');
+            bgVideo.play().catch(() => {});
+            showToast(`Loaded background: ${file.name}`);
+          } catch (err) {
+            showToast('Could not preview selected video file.');
+          }
+        });
+      }
+
+      // =========================================================================
+      // 3. Seamless Deep-Space Milky Way Nebula & Twinkling Starfield Canvas
+      //    (Matches the diagonal Milky Way dust-band aesthetic as fallback/base)
+      // =========================================================================
+      const cosmosCanvas = document.getElementById('cosmos-canvas');
+      const cosmosCtx = cosmosCanvas ? cosmosCanvas.getContext('2d') : null;
+      let cw = 0;
+      let ch = 0;
+      let stars = [];
+      let dustClouds = [];
+      let parallaxX = 0;
+      let parallaxY = 0;
+      let targetParallaxX = 0;
+      let targetParallaxY = 0;
+
+      function initCosmosScene() {
+        if (!cosmosCanvas || !cosmosCtx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        cw = window.innerWidth;
+        ch = window.innerHeight;
+        cosmosCanvas.width = Math.floor(cw * dpr);
+        cosmosCanvas.height = Math.floor(ch * dpr);
+        cosmosCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        // Generate starfield with higher density along the diagonal Milky Way band
+        const starCount = Math.min(750, Math.floor((cw * ch) / 2100));
+        stars = [];
+        for (let i = 0; i < starCount; i++) {
+          const alongBand = Math.random() < 0.58;
+          let x, y;
+          if (alongBand) {
+            const t = Math.random();
+            const spread = (Math.random() - 0.5) * (Math.random() * 0.42);
+            x = t * cw + spread * cw * 0.55;
+            y = t * ch - spread * ch * 0.55;
+          } else {
+            x = Math.random() * cw;
+            y = Math.random() * ch;
+          }
+
+          const tintRoll = Math.random();
+          let color = '255, 252, 245';
+          if (tintRoll < 0.22) color = '255, 214, 165'; // Warm golden star
+          else if (tintRoll < 0.36) color = '195, 222, 255'; // Cool blue-white star
+
+          stars.push({
+            x,
+            y,
+            radius: Math.random() < 0.08 ? 1.5 + Math.random() * 1.1 : 0.45 + Math.random() * 1.0,
+            baseAlpha: 0.25 + Math.random() * 0.72,
+            twinkleSpeed: 0.6 + Math.random() * 2.2,
+            twinklePhase: Math.random() * Math.PI * 2,
+            depth: 0.2 + Math.random() * 0.8,
+            color,
+          });
+        }
+
+        // Precompute warm amber/sepia cosmic dust clouds along the diagonal galaxy band
+        dustClouds = [];
+        const cloudSteps = 26;
+        for (let i = 0; i < cloudSteps; i++) {
+          const t = i / (cloudSteps - 1);
+          const cx = cw * (-0.05 + t * 1.1) + (Math.random() - 0.5) * 60;
+          const cy = ch * (-0.05 + t * 1.1) + (Math.random() - 0.5) * 60;
+          const r = Math.max(cw, ch) * (0.11 + Math.random() * 0.09);
+          dustClouds.push({
+            x: cx,
+            y: cy,
+            r,
+            alpha: 0.09 + Math.sin(t * Math.PI) * 0.11,
+            phase: Math.random() * Math.PI * 2,
+          });
+        }
+      }
+
+      function renderCosmos(nowMs) {
+        if (!cosmosCtx) return;
+        const t = nowMs * 0.001;
+
+        // Smooth mouse parallax interpolation
+        parallaxX += (targetParallaxX - parallaxX) * 0.05;
+        parallaxY += (targetParallaxY - parallaxY) * 0.05;
+
+        // Deep space base fill
+        cosmosCtx.fillStyle = '#07080f';
+        cosmosCtx.fillRect(0, 0, cw, ch);
+
+        // Diagonal Milky Way Galactic Glow Band (Top-Left to Bottom-Right)
+        cosmosCtx.save();
+        cosmosCtx.translate(parallaxX * 14, parallaxY * 14);
+
+        const diagGrad = cosmosCtx.createLinearGradient(0, ch, cw, 0);
+        diagGrad.addColorStop(0.0, 'rgba(10, 12, 22, 0)');
+        diagGrad.addColorStop(0.32, 'rgba(68, 46, 26, 0.16)');
+        diagGrad.addColorStop(0.46, 'rgba(148, 102, 54, 0.34)');
+        diagGrad.addColorStop(0.5, 'rgba(196, 145, 84, 0.42)');
+        diagGrad.addColorStop(0.54, 'rgba(136, 92, 48, 0.32)');
+        diagGrad.addColorStop(0.68, 'rgba(56, 38, 24, 0.14)');
+        diagGrad.addColorStop(1.0, 'rgba(10, 12, 22, 0)');
+        cosmosCtx.fillStyle = diagGrad;
+        cosmosCtx.fillRect(-40, -40, cw + 80, ch + 80);
+
+        // Layered warm nebula dust clouds along the galactic core
+        for (let i = 0; i < dustClouds.length; i++) {
+          const c = dustClouds[i];
+          const driftX = Math.sin(t * 0.18 + c.phase) * 10;
+          const driftY = Math.cos(t * 0.15 + c.phase) * 10;
+          const grad = cosmosCtx.createRadialGradient(
+            c.x + driftX,
+            c.y + driftY,
+            0,
+            c.x + driftX,
+            c.y + driftY,
+            c.r
+          );
+          grad.addColorStop(0, `rgba(176, 122, 64, ${c.alpha})`);
+          grad.addColorStop(0.45, `rgba(92, 58, 30, ${c.alpha * 0.65})`);
+          grad.addColorStop(1, 'rgba(12, 10, 18, 0)');
+          cosmosCtx.fillStyle = grad;
+          cosmosCtx.beginPath();
+          cosmosCtx.arc(c.x + driftX, c.y + driftY, c.r, 0, Math.PI * 2);
+          cosmosCtx.fill();
+        }
+
+        // Subtle dark rift lane down the center of the Milky Way (just like the video frames)
+        cosmosCtx.lineWidth = Math.max(cw, ch) * 0.045;
+        cosmosCtx.strokeStyle = 'rgba(16, 11, 8, 0.38)';
+        cosmosCtx.beginPath();
+        cosmosCtx.moveTo(-cw * 0.05, -ch * 0.05);
+        cosmosCtx.bezierCurveTo(
+          cw * 0.32,
+          ch * 0.38,
+          cw * 0.66,
+          ch * 0.62,
+          cw * 1.05,
+          ch * 1.05
+        );
+        cosmosCtx.stroke();
+        cosmosCtx.restore();
+
+        // Twinkling Stars
+        for (let i = 0; i < stars.length; i++) {
+          const s = stars[i];
+          const sx = s.x + parallaxX * 26 * s.depth;
+          const sy = s.y + parallaxY * 26 * s.depth;
+          const twinkle = 0.65 + 0.35 * Math.sin(t * s.twinkleSpeed + s.twinklePhase);
+          const alpha = Math.min(1, s.baseAlpha * twinkle);
+
+          cosmosCtx.fillStyle = `rgba(${s.color}, ${alpha.toFixed(3)})`;
+          cosmosCtx.beginPath();
+          cosmosCtx.arc(sx, sy, s.radius, 0, Math.PI * 2);
+          cosmosCtx.fill();
+        }
+
+        requestAnimationFrame(renderCosmos);
+      }
+
+      // =========================================================================
+      // 4. Interactive Cursor Aura & Subtle Stardust Sparkles
+      // =========================================================================
+      const cursorAura = document.getElementById('cursor-aura');
+      const sparkleCanvas = document.getElementById('sparkle-canvas');
+      const sparkleCtx = sparkleCanvas ? sparkleCanvas.getContext('2d') : null;
+      let sparkles = [];
+      let lastSparkleTime = 0;
+
+      function resizeSparkleCanvas() {
+        if (!sparkleCanvas || !sparkleCtx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        sparkleCanvas.width = Math.floor(window.innerWidth * dpr);
+        sparkleCanvas.height = Math.floor(window.innerHeight * dpr);
+        sparkleCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function spawnSparkle(x, y, burst = false) {
+        const count = burst ? 12 : 1;
+        for (let i = 0; i < count; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = burst ? 0.8 + Math.random() * 2.4 : 0.2 + Math.random() * 0.6;
+          sparkles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 0.25,
+            life: 1,
+            decay: burst ? 0.025 + Math.random() * 0.02 : 0.03 + Math.random() * 0.02,
+            size: burst ? 1.5 + Math.random() * 1.8 : 1.1 + Math.random() * 1.2,
+          });
+        }
+      }
+
+      function renderSparkles() {
+        if (sparkleCtx) {
+          sparkleCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+          for (let i = sparkles.length - 1; i >= 0; i--) {
+            const p = sparkles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= p.decay;
+            if (p.life <= 0) {
+              sparkles.splice(i, 1);
+              continue;
+            }
+            sparkleCtx.fillStyle = `rgba(253, 230, 138, ${(p.life * 0.75).toFixed(3)})`;
+            sparkleCtx.beginPath();
+            sparkleCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+            sparkleCtx.fill();
+          }
+        }
+        requestAnimationFrame(renderSparkles);
+      }
+
+      window.addEventListener(
+        'pointermove',
+        (e) => {
+          // Update parallax targets (-0.5 to 0.5)
+          targetParallaxX = e.clientX / Math.max(1, window.innerWidth) - 0.5;
+          targetParallaxY = e.clientY / Math.max(1, window.innerHeight) - 0.5;
+
+          if (cursorAura) {
+            cursorAura.style.opacity = '1';
+            cursorAura.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate3d(-50%, -50%, 0)`;
+          }
+
+          const now = performance.now();
+          if (now - lastSparkleTime > 55) {
+            spawnSparkle(e.clientX, e.clientY, false);
+            lastSparkleTime = now;
+          }
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        'pointerdown',
+        (e) => {
+          spawnSparkle(e.clientX, e.clientY, true);
+        },
+        { passive: true }
+      );
+
+      // =========================================================================
+      // 5. Portal Cards: 3D Cursor Tilt, Radial Spotlight Sheen & Aura Sync
+      // =========================================================================
+      const portalCards = Array.from(document.querySelectorAll('.portal-card'));
+
+      portalCards.forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+          if (e.pointerType !== 'mouse') return;
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const px = x / rect.width;
+          const py = y / rect.height;
+
+          // Subtle 3D tilt (max +/- 6 degrees)
+          const tiltY = (px - 0.5) * 11;
+          const tiltX = (0.5 - py) * 11;
+
+          card.style.setProperty('--mouse-x', `${x.toFixed(1)}px`);
+          card.style.setProperty('--mouse-y', `${y.toFixed(1)}px`);
+          card.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
+          card.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
+        });
+
+        card.addEventListener('pointerenter', () => {
+          const aura = card.getAttribute('data-aura');
+          if (aura) {
+            document.documentElement.style.setProperty('--aura-color', aura);
+          }
+        });
+
+        card.addEventListener('pointerleave', () => {
+          card.style.setProperty('--tilt-x', '0deg');
+          card.style.setProperty('--tilt-y', '0deg');
+          document.documentElement.style.setProperty('--aura-color', 'rgba(245, 185, 95, 0.14)');
+        });
+      });
+
+      // =========================================================================
+      // 6. Keyboard Shortcuts (1, 2, 3) & "Shuffle & Play" Roulette
+      // =========================================================================
+      function launchPortalCard(card) {
+        if (!card) return;
+        const name = card.getAttribute('data-name') || 'Portal';
+        const href = card.getAttribute('href');
+
+        portalCards.forEach((c) => c.classList.remove('is-highlighted'));
+        card.classList.add('is-highlighted');
+        showToast(`Opening ${name}...`, 1800);
+
+        setTimeout(() => {
+          card.classList.remove('is-highlighted');
+          if (href) {
+            window.open(href, '_blank', 'noopener,noreferrer');
+          }
+        }, 280);
+      }
+
+      window.addEventListener('keydown', (e) => {
+        // Ignore if user is typing in an input
+        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+        if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+        if (e.key === '1' || e.key === '2' || e.key === '3') {
+          e.preventDefault();
+          const targetCard = document.getElementById(`portal-${e.key}`);
+          launchPortalCard(targetCard);
+        }
+      });
+
+      const shuffleBtn = document.getElementById('shuffle-btn');
+      let isShuffling = false;
+
+      if (shuffleBtn) {
+        shuffleBtn.addEventListener('click', () => {
+          if (isShuffling || portalCards.length === 0) return;
+          isShuffling = true;
+          shuffleBtn.disabled = true;
+
+          let step = 0;
+          const totalSteps = 8 + Math.floor(Math.random() * 4);
+          let currentIndex = Math.floor(Math.random() * portalCards.length);
+
+          function tickRoulette() {
+            portalCards.forEach((c) => c.classList.remove('is-highlighted'));
+            const activeCard = portalCards[currentIndex % portalCards.length];
+            activeCard.classList.add('is-highlighted');
+
+            const aura = activeCard.getAttribute('data-aura');
+            if (aura) {
+              document.documentElement.style.setProperty('--aura-color', aura);
+            }
+
+            step++;
+            if (step < totalSteps) {
+              currentIndex++;
+              const delay = 75 + step * 16;
+              setTimeout(tickRoulette, delay);
+            } else {
+              const chosenCard = activeCard;
+              const chosenName = chosenCard.getAttribute('data-name');
+              showToast(`Selected: ${chosenName}!`, 1800);
+              setTimeout(() => {
+                isShuffling = false;
+                shuffleBtn.disabled = false;
+                launchPortalCard(chosenCard);
+              }, 420);
+            }
+          }
+
+          tickRoulette();
+        });
+      }
+
+      // =========================================================================
+      // 7. Initialize & Handle Resize
+      // =========================================================================
+      window.addEventListener('resize', () => {
+        initCosmosScene();
+        resizeSparkleCanvas();
+      });
+
+      window.onload = function () {
+        initCosmosScene();
+        resizeSparkleCanvas();
+        requestAnimationFrame(renderCosmos);
+        requestAnimationFrame(renderSparkles);
+      };
+    })();
+  </script>
+</body>
+</html>
