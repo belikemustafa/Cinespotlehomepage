@@ -266,6 +266,11 @@
       --accent-secondary-rgb: 253, 224, 71;
     }
 
+    .card-cinepalette {
+      --accent-rgb: 52, 211, 153;
+      --accent-secondary-rgb: 110, 231, 183;
+    }
+
     /* Icon Container Pop on Card Hover */
     .portal-icon-wrap {
       transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
@@ -309,7 +314,7 @@
     }
 
     .animate-card-2 {
-      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
     }
 
     .animate-card-3 {
@@ -320,58 +325,74 @@
       animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both;
     }
 
-    .animate-footer {
+    .animate-card-5 {
       animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.42s both;
     }
 
+    .animate-footer {
+      animation: fadeSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.5s both;
+    }
+
     /* Custom Range Slider for Blur Pill */
-    input[type='range'].blur-slider {
+    .blur-slider {
       -webkit-appearance: none;
       appearance: none;
-      width: 78px;
+      width: 76px;
       height: 4px;
-      border-radius: 999px;
+      border-radius: 9999px;
       background: rgba(255, 255, 255, 0.18);
       outline: none;
       cursor: pointer;
     }
 
-    input[type='range'].blur-slider::-webkit-slider-thumb {
+    .blur-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #fbbf24;
+      width: 13px;
+      height: 13px;
+      border-radius: 9999px;
+      background: #fde68a;
+      border: 2px solid #0f172a;
       box-shadow: 0 0 10px rgba(251, 191, 36, 0.65);
-      cursor: pointer;
       transition: transform 0.15s ease;
     }
 
-    input[type='range'].blur-slider::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
+    .blur-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
     }
 
-    input[type='range'].blur-slider::-moz-range-thumb {
-      width: 14px;
-      height: 14px;
-      border: none;
-      border-radius: 50%;
-      background: #fbbf24;
+    .blur-slider::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border-radius: 9999px;
+      background: #fde68a;
+      border: 2px solid #0f172a;
       box-shadow: 0 0 10px rgba(251, 191, 36, 0.65);
-      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .animate-hero,
+      .animate-card-1,
+      .animate-card-2,
+      .animate-card-3,
+      .animate-card-4,
+      .animate-card-5,
+      .animate-footer {
+        animation: none;
+      }
+      .portal-card {
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
     }
   </style>
 </head>
-<body class="relative min-h-screen flex flex-col justify-between selection:bg-amber-400/30 selection:text-amber-100">
 
-  <!-- Full-Viewport Blurred Background Layer (Video + Seamless Milky Way Canvas Fallback) -->
+<body class="relative min-h-screen flex flex-col selection:bg-amber-400/30 selection:text-amber-100">
+  <!-- Full-Viewport Blurred Background Media Layer (Canvas Milky Way Fallback + Video) -->
   <div class="bg-media-layer" aria-hidden="true">
-    <div class="bg-media-filtered" id="bg-blur-container">
-      <!-- Animated Milky Way & Starfield Canvas Fallback -->
+    <div class="bg-media-filtered">
       <canvas id="cosmos-canvas"></canvas>
-
-      <!-- Full-Viewport Background Video -->
       <video
         id="bg-video"
         autoplay
@@ -393,7 +414,7 @@
   <div id="cursor-aura" aria-hidden="true"></div>
   <canvas id="sparkle-canvas" class="fixed inset-0 pointer-events-none z-[3]" aria-hidden="true"></canvas>
 
-  <!-- Main Centered Hero & 4 Portal Buttons -->
+  <!-- Main Centered Hero & 5 Portal Buttons -->
   <main class="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-7xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
     <!-- Brand Header / Hero -->
     <header class="text-center max-w-2xl mx-auto mb-10 sm:mb-12 animate-hero">
@@ -452,10 +473,10 @@
       </div>
     </header>
 
-    <!-- 4 Interactive Portal Tiles Grid (4 col wide desktop, 2x2 medium, 1 col mobile) -->
+    <!-- 5 Interactive Portal Tiles Grid (3 + 2 centered on desktop, 2 + 2 + 1 on tablet, 1 col mobile) -->
     <section
       aria-label="Game & Discovery Portals"
-      class="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 sm:gap-6"
+      class="w-full flex flex-wrap justify-center gap-5 sm:gap-6"
     >
       <!-- Portal 1: Movies, TV Series and Anime -->
       <a
@@ -466,7 +487,7 @@
         data-index="1"
         data-name="Movies, TV Series and Anime"
         data-aura="rgba(129, 140, 248, 0.2)"
-        class="portal-card card-movies group p-6 min-h-[248px] sm:min-h-[264px] animate-card-1"
+        class="portal-card card-movies group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[248px] sm:min-h-[264px] animate-card-1"
       >
         <div class="relative z-10 flex items-start justify-between gap-4">
           <!-- Film / TV / Anime Custom Icon -->
@@ -515,7 +536,7 @@
         data-index="2"
         data-name="Songs and Music"
         data-aura="rgba(244, 114, 182, 0.2)"
-        class="portal-card card-music group p-6 min-h-[248px] sm:min-h-[264px] animate-card-2"
+        class="portal-card card-music group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[248px] sm:min-h-[264px] animate-card-2"
       >
         <div class="relative z-10 flex items-start justify-between gap-4">
           <!-- Songs & Music Waveform Custom Icon -->
@@ -566,7 +587,7 @@
         data-index="3"
         data-name="Pokemon"
         data-aura="rgba(56, 189, 248, 0.2)"
-        class="portal-card card-pokemon group p-6 min-h-[248px] sm:min-h-[264px] animate-card-3"
+        class="portal-card card-pokemon group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[248px] sm:min-h-[264px] animate-card-3"
       >
         <div class="relative z-10 flex items-start justify-between gap-4">
           <!-- Poké-Inspired Geometric Emblem SVG -->
@@ -616,7 +637,7 @@
         data-index="4"
         data-name="Would Watch That"
         data-aura="rgba(251, 191, 36, 0.22)"
-        class="portal-card card-watchthat group p-6 min-h-[248px] sm:min-h-[264px] animate-card-4"
+        class="portal-card card-watchthat group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[248px] sm:min-h-[264px] animate-card-4"
       >
         <div class="relative z-10 flex items-start justify-between gap-4">
           <!-- Watchlist / Curated Screen Spark Custom Icon -->
@@ -662,6 +683,62 @@
           </div>
         </div>
       </a>
+
+      <!-- Portal 5: CinePalette -->
+      <a
+        id="portal-5"
+        href="https://cinepalette.pages.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-index="5"
+        data-name="CinePalette"
+        data-aura="rgba(52, 211, 153, 0.22)"
+        class="portal-card card-cinepalette group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[248px] sm:min-h-[264px] animate-card-5"
+      >
+        <div class="relative z-10 flex items-start justify-between gap-4">
+          <!-- Cinema Color Palette Swatch Custom Icon -->
+          <div class="portal-icon-wrap w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-emerald-400/15 border border-emerald-300/30 flex items-center justify-center text-emerald-300 shadow-[0_8px_24px_rgba(52,211,153,0.22)]">
+            <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14 4C8.48 4 4 8.28 4 13.56C4 18.84 8.48 23.12 14 23.12C15.1 23.12 16 22.22 16 21.12C16 20.61 15.8 20.14 15.48 19.79C15.17 19.44 14.98 18.98 14.98 18.48C14.98 17.38 15.88 16.48 16.98 16.48H19.2C21.85 16.48 24 14.33 24 11.68C24 7.44 19.52 4 14 4Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <circle cx="9.2" cy="12.2" r="1.4" fill="currentColor" />
+              <circle cx="12.4" cy="8.8" r="1.4" fill="currentColor" />
+              <circle cx="16.8" cy="8.8" r="1.4" fill="currentColor" />
+              <circle cx="19.6" cy="12" r="1.4" fill="currentColor" />
+            </svg>
+          </div>
+
+          <!-- Keyboard Shortcut Badge -->
+          <span
+            title="Press key 5 to launch"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.07] border border-white/[0.12] text-xs font-semibold text-slate-300 group-hover:border-emerald-300/45 group-hover:text-emerald-200 transition-colors"
+          >
+            5
+          </span>
+        </div>
+
+        <div class="relative z-10 mt-6">
+          <h2 class="font-display text-xl font-bold text-white tracking-tight group-hover:text-emerald-100 transition-colors">
+            CinePalette
+          </h2>
+          <p class="mt-2 text-sm text-slate-300/85 leading-relaxed">
+            Identify movies &amp; explore cinema through iconic color palettes
+          </p>
+
+          <div class="mt-5 pt-4 border-t border-white/[0.08] flex items-center justify-between text-xs font-medium text-emerald-300/95">
+            <span class="tracking-wide uppercase text-[11px] font-semibold">Launch Portal</span>
+            <span class="portal-arrow inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-400/15 text-emerald-300 group-hover:bg-emerald-400 group-hover:text-slate-950">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
     </section>
 
     <!-- Subtle Keyboard Shortcut Hint -->
@@ -670,8 +747,9 @@
         Tip: Press
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">1</kbd>,
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">2</kbd>,
-        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">3</kbd>, or
-        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">4</kbd>
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">3</kbd>,
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">4</kbd>, or
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">5</kbd>
         to open a portal, or
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.07] border border-white/[0.12] text-slate-300 font-sans">R</kbd>
         for a Random Pick.
@@ -782,7 +860,6 @@
           // Gracefully keep the animated Milky Way canvas visible if video sources aren't present
           bgVideo.classList.remove('is-ready');
         });
-        // Attempt playback cleanly
         const playPromise = bgVideo.play();
         if (playPromise && typeof playPromise.catch === 'function') {
           playPromise.catch(() => {
@@ -942,7 +1019,7 @@
           cosmosCtx.fill();
         }
 
-        // Subtle dark rift lane down the center of the Milky Way (just like the video frames)
+        // Subtle dark rift lane down the center of the Milky Way
         cosmosCtx.lineWidth = Math.max(cw, ch) * 0.045;
         cosmosCtx.strokeStyle = 'rgba(16, 11, 8, 0.38)';
         cosmosCtx.beginPath();
@@ -1033,7 +1110,6 @@
       window.addEventListener(
         'pointermove',
         (e) => {
-          // Update parallax targets (-0.5 to 0.5)
           targetParallaxX = e.clientX / Math.max(1, window.innerWidth) - 0.5;
           targetParallaxY = e.clientY / Math.max(1, window.innerHeight) - 0.5;
 
@@ -1073,7 +1149,7 @@
           const px = x / rect.width;
           const py = y / rect.height;
 
-          // Subtle 3D tilt (max +/- 6 degrees)
+          // Subtle 3D tilt (max +/- 5.5 degrees)
           const tiltY = (px - 0.5) * 11;
           const tiltX = (0.5 - py) * 11;
 
@@ -1098,7 +1174,7 @@
       });
 
       // =========================================================================
-      // 6. Keyboard Shortcuts (1, 2, 3, 4, R) & "Random Pick" Roulette
+      // 6. Keyboard Shortcuts (1–5, R) & "Random Pick" Roulette
       // =========================================================================
       function launchPortalCard(card) {
         if (!card) return;
@@ -1126,7 +1202,7 @@
         if (shuffleBtn) shuffleBtn.disabled = true;
 
         let step = 0;
-        const totalSteps = 9 + Math.floor(Math.random() * 4);
+        const totalSteps = 10 + Math.floor(Math.random() * 5);
         let currentIndex = Math.floor(Math.random() * portalCards.length);
 
         function tickRoulette() {
@@ -1159,12 +1235,15 @@
         tickRoulette();
       }
 
+      if (shuffleBtn) {
+        shuffleBtn.addEventListener('click', triggerRandomRoulette);
+      }
+
       window.addEventListener('keydown', (e) => {
-        // Ignore if user is typing in an input
         if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
         if (e.metaKey || e.ctrlKey || e.altKey) return;
 
-        if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4') {
+        if (e.key === '1' || e.key === '2' || e.key === '3' || e.key === '4' || e.key === '5') {
           e.preventDefault();
           const targetCard = document.getElementById(`portal-${e.key}`);
           launchPortalCard(targetCard);
@@ -1174,24 +1253,30 @@
         }
       });
 
-      if (shuffleBtn) {
-        shuffleBtn.addEventListener('click', triggerRandomRoulette);
-      }
-
       // =========================================================================
-      // 7. Initialize & Handle Resize
+      // 7. Resize Handling & Animation Startup
       // =========================================================================
+      let resizeTimer = null;
       window.addEventListener('resize', () => {
-        initCosmosScene();
-        resizeSparkleCanvas();
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          initCosmosScene();
+          resizeSparkleCanvas();
+        }, 120);
       });
 
-      window.onload = function () {
+      function startVisuals() {
         initCosmosScene();
         resizeSparkleCanvas();
         requestAnimationFrame(renderCosmos);
         requestAnimationFrame(renderSparkles);
-      };
+      }
+
+      if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', startVisuals);
+      } else {
+        startVisuals();
+      }
     })();
   </script>
 </body>
