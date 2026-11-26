@@ -68,15 +68,16 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Full-Viewport Cosmic Video + High-Detail Milky Way Canvas Layer */
+    /* Full-Viewport Blurred Background Video Layer (No Static Background Stars) */
     .bg-media-layer {
       position: fixed;
       inset: 0;
       z-index: 0;
       overflow: hidden;
       pointer-events: none;
-      background: #04050b;
-      animation: pageReveal 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+      background:
+        radial-gradient(ellipse at 52% 45%, #121528 0%, #070913 55%, #03040a 100%);
+      animation: pageReveal 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
     @keyframes pageReveal {
@@ -95,7 +96,7 @@
       inset: -4%;
       width: 108%;
       height: 108%;
-      filter: blur(var(--bg-blur)) brightness(0.96) saturate(1.15);
+      filter: blur(var(--bg-blur)) brightness(0.95) saturate(1.14);
       transform: translate3d(var(--parallax-x), var(--parallax-y), 0) scale(1.02);
       transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform, filter;
@@ -118,8 +119,8 @@
       z-index: 1;
       pointer-events: none;
       background:
-        radial-gradient(ellipse at 50% 42%, rgba(4, 5, 11, 0.05) 0%, rgba(4, 5, 11, 0.32) 64%, rgba(3, 4, 9, 0.72) 100%),
-        linear-gradient(180deg, rgba(4, 5, 11, 0.26) 0%, rgba(4, 5, 11, 0.04) 40%, rgba(4, 5, 11, 0.54) 100%);
+        radial-gradient(ellipse at 50% 42%, rgba(4, 5, 11, 0.06) 0%, rgba(4, 5, 11, 0.34) 64%, rgba(3, 4, 9, 0.74) 100%),
+        linear-gradient(180deg, rgba(4, 5, 11, 0.26) 0%, rgba(4, 5, 11, 0.04) 40%, rgba(4, 5, 11, 0.56) 100%);
     }
 
     /* Smoothly Interpolated Reactive Ambient Edge Wash */
@@ -135,25 +136,37 @@
       );
     }
 
-    /* Subtle Shooting Stars Overlay (No Static Background Stars) */
+    /* Subtle Shooting Stars Overlay (Only Shooting Stars, No Static Stars) */
     #shooting-stars-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
       opacity: 0.85;
       filter: blur(0.4px);
     }
 
     /* Softly Blurred Whisper-Light Cursor Dust Trail */
     #sparkle-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      pointer-events: none;
       filter: blur(1.8px);
       opacity: 0.6;
     }
 
-    /* Soft Blurred Magic Cursor Aura & Orb */
+    /* Soft Blurred Mouse-Following Ambient Aura */
     #cursor-aura {
       position: fixed;
       top: 0;
       left: 0;
-      width: 540px;
-      height: 540px;
+      width: 520px;
+      height: 520px;
       border-radius: 9999px;
       pointer-events: none;
       z-index: 3;
@@ -170,6 +183,7 @@
       will-change: transform;
     }
 
+    /* Softly Blurred Mouse-Following Circle & Core */
     #magic-cursor-ring,
     #magic-cursor-dot {
       position: fixed;
@@ -257,7 +271,7 @@
       pointer-events: auto;
     }
 
-    /* Portal Cards: Translucent Cosmic Glass, Silky Spring Pop-Up & Smooth 3D Tilt */
+    /* Portal Cards: Translucent Cosmic Glass, Smooth Spring Pop-Up & 3D Tilt */
     .portal-card {
       --mouse-x: 50%;
       --mouse-y: 50%;
@@ -486,14 +500,14 @@
       --accent-secondary-rgb: 253, 224, 71;
     }
 
+    .card-watchthattoo {
+      --accent-rgb: 232, 121, 249;
+      --accent-secondary-rgb: 240, 171, 252;
+    }
+
     .card-cinepalette {
       --accent-rgb: 52, 211, 153;
       --accent-secondary-rgb: 110, 231, 183;
-    }
-
-    .card-wordgame {
-      --accent-rgb: 167, 139, 250;
-      --accent-secondary-rgb: 196, 181, 253;
     }
 
     .card-choicegame {
@@ -511,11 +525,6 @@
       --accent-secondary-rgb: 103, 232, 249;
     }
 
-    .card-watchthattoo {
-      --accent-rgb: 232, 121, 249;
-      --accent-secondary-rgb: 240, 171, 252;
-    }
-
     .card-amongus {
       --accent-rgb: 248, 113, 113;
       --accent-secondary-rgb: 252, 165, 165;
@@ -526,34 +535,45 @@
       --accent-secondary-rgb: 190, 242, 100;
     }
 
-    /* Icon Container Pop on Card Hover */
+    .card-mapsgame {
+      --accent-rgb: 45, 212, 191;
+      --accent-secondary-rgb: 94, 234, 212;
+    }
+
+    .card-wordgame {
+      --accent-rgb: 167, 139, 250;
+      --accent-secondary-rgb: 196, 181, 253;
+    }
+
+    /* Icon & Arrow Transitions on Card Hover */
     .portal-icon-wrap {
       transition:
-        transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 0.45s ease;
+        transform 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.42s ease,
+        background-color 0.38s ease,
+        border-color 0.38s ease;
     }
 
     .portal-card:hover .portal-icon-wrap,
     .portal-card:focus-visible .portal-icon-wrap,
     .portal-card.is-highlighted .portal-icon-wrap {
-      transform: translateY(-3px) scale(1.06);
+      transform: translateY(-2px) scale(1.06);
     }
 
     .portal-arrow {
       transition:
-        transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-        background-color 0.32s ease,
-        color 0.32s ease;
+        transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.35s ease,
+        color 0.35s ease;
     }
 
     .portal-card:hover .portal-arrow,
     .portal-card:focus-visible .portal-arrow,
     .portal-card.is-highlighted .portal-arrow {
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
 
-    /* Smooth Entrance Keyframes */
+    /* Smooth Staggered Entrance Animations */
     @keyframes fadeSlideUp {
       from {
         opacity: 0;
@@ -578,44 +598,46 @@
     .animate-card-10 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.53s both; }
     .animate-card-11 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.58s both; }
     .animate-card-12 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.63s both; }
-    .animate-footer { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.68s both; }
+    .animate-card-13 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.68s both; }
+    .animate-footer { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.73s both; }
 
     /* Custom Range Slider for Blur Pill */
-    .blur-slider {
+    input[type='range'].blur-slider {
       -webkit-appearance: none;
       appearance: none;
-      width: 72px;
+      width: 78px;
       height: 4px;
       border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.2);
       outline: none;
       cursor: pointer;
     }
 
-    .blur-slider::-webkit-slider-thumb {
+    input[type='range'].blur-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 13px;
-      height: 13px;
+      width: 14px;
+      height: 14px;
       border-radius: 9999px;
-      background: #fcd34d;
+      background: #fde68a;
       border: 2px solid #0f172a;
-      box-shadow: 0 0 10px rgba(252, 211, 77, 0.75);
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+      cursor: pointer;
       transition: transform 0.2s ease;
     }
 
-    .blur-slider::-webkit-slider-thumb:hover {
+    input[type='range'].blur-slider::-webkit-slider-thumb:hover {
       transform: scale(1.18);
     }
 
-    .blur-slider::-moz-range-thumb {
-      width: 13px;
-      height: 13px;
+    input[type='range'].blur-slider::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
       border-radius: 9999px;
-      background: #fcd34d;
+      background: #fde68a;
       border: 2px solid #0f172a;
-      box-shadow: 0 0 10px rgba(252, 211, 77, 0.75);
-      transition: transform 0.2s ease;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+      cursor: pointer;
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -632,24 +654,28 @@
       .animate-card-10,
       .animate-card-11,
       .animate-card-12,
-      .animate-footer {
-        animation: none;
-      }
+      .animate-card-13,
+      .animate-footer,
       .bg-media-layer {
         animation: none;
+      }
+      .portal-card,
+      .portal-icon-wrap,
+      .portal-arrow {
+        transition: none;
       }
     }
   </style>
 </head>
-<body class="relative min-h-screen flex flex-col selection:bg-amber-400/30 selection:text-amber-100">
-  <!-- Full-Viewport Blurred Original Video Background Layer -->
+<body class="relative min-h-screen flex flex-col justify-between selection:bg-amber-400/30 selection:text-amber-100">
+  <!-- Full-Viewport Blurred Original Video Background -->
   <div class="bg-media-layer" aria-hidden="true">
     <div class="bg-media-filtered">
       <video
         id="bg-video"
         autoplay
-        loop
         muted
+        loop
         playsinline
         preload="auto"
       >
@@ -659,39 +685,45 @@
     </div>
   </div>
 
-  <!-- Subtle Atmospheric Vignette & Reactive Edge Tint -->
+  <!-- Vignette & Subtle Reactive Ambient Edge Wash -->
   <div class="cosmic-vignette" aria-hidden="true"></div>
   <div class="ambient-edge-wash" aria-hidden="true"></div>
 
-  <!-- Occasional Shooting Stars Layer -->
-  <canvas id="shooting-stars-canvas" class="fixed inset-0 pointer-events-none z-[2]" aria-hidden="true"></canvas>
+  <!-- Occasional Shooting Stars Overlay (No Static Stars) -->
+  <canvas id="shooting-stars-canvas" aria-hidden="true"></canvas>
 
-  <!-- Magic Cursor Aura, Glowing Orb/Ring & Stardust Sparkle Canvas -->
+  <!-- Soft Blurred Ambient Cursor Aura, Dust Trail & Blurred Magic Cursor Circle -->
   <div id="cursor-aura" aria-hidden="true"></div>
-  <canvas id="sparkle-canvas" class="fixed inset-0 pointer-events-none z-[4]" aria-hidden="true"></canvas>
+  <canvas id="sparkle-canvas" aria-hidden="true"></canvas>
   <div id="magic-cursor-ring" aria-hidden="true"></div>
   <div id="magic-cursor-dot" aria-hidden="true"></div>
 
-  <!-- Drag & Drop Video Hint Overlay -->
+  <!-- Drag & Drop Video Overlay -->
   <div
     id="video-drop-overlay"
-    class="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/75 backdrop-blur-md"
+    class="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/75 backdrop-blur-md p-6"
     aria-hidden="true"
   >
-    <div class="px-8 py-6 rounded-3xl border-2 border-dashed border-amber-300/70 bg-slate-900/80 text-center shadow-2xl">
-      <p class="font-display text-xl font-bold text-amber-200">Drop your cosmic video here</p>
-      <p class="mt-1 text-sm text-slate-300">Instant softly blurred full-screen background</p>
+    <div class="max-w-md w-full rounded-3xl border-2 border-dashed border-amber-300/60 bg-slate-900/80 p-8 text-center shadow-2xl">
+      <div class="mx-auto mb-4 w-14 h-14 rounded-2xl bg-amber-400/15 border border-amber-300/35 flex items-center justify-center text-amber-300">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="5" width="13" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7" />
+          <path d="M16 9.5L21 6.8V17.2L16 14.5V9.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <p class="font-display text-lg font-bold text-white">Drop Your Background Video</p>
+      <p class="mt-1 text-sm text-slate-300">Release an .mp4 or .webm file to play it softly blurred behind CineSpotle</p>
     </div>
   </div>
 
-  <!-- Main Centered Hero & 9 Portal Cards -->
-  <main class="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-7xl mx-auto px-5 sm:px-8 pt-10 pb-20 sm:py-14">
-    <!-- Brand Header / Hero -->
+  <!-- Main Centered Hub Content -->
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-6xl mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-24">
+    <!-- Hero Header -->
     <header class="text-center max-w-2xl mx-auto mb-9 sm:mb-12 animate-hero">
       <!-- Subtle Live Cosmic Badge -->
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.07] border border-white/[0.13] backdrop-blur-md text-xs font-medium text-amber-100/90 mb-4 shadow-sm">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.95)]"></span>
-        <span id="backdrop-mode-label">Cosmic Portal Hub · 12 Destinations</span>
+        <span id="backdrop-mode-label">Cosmic Portal Hub · 13 Destinations</span>
       </div>
 
       <!-- CineSpotle Wordmark & Custom Spotlight Emblem -->
@@ -716,7 +748,7 @@
       </p>
     </header>
 
-    <!-- 12 Interactive Portal Tiles Grid -->
+    <!-- 13 Interactive Portal Tiles Grid -->
     <section
       id="portal-grid"
       aria-label="Game & Discovery Portals"
@@ -1355,18 +1387,79 @@
         </div>
       </a>
 
-      <!-- Portal 12: Word Game (Moved to Bottom) -->
+      <!-- Portal 12: Maps Game -->
       <a
         id="portal-12"
-        href="https://word-game-e9l.pages.dev/"
+        href="https://mapsgame.pages.dev/"
         target="_blank"
         rel="noopener noreferrer"
         data-index="12"
+        data-name="Maps Game"
+        data-aura="rgba(45, 212, 191, 0.26)"
+        data-edge="rgba(45, 212, 191, 0.16)"
+        data-note="987.77"
+        class="portal-card card-mapsgame group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[244px] sm:min-h-[258px] animate-card-12"
+      >
+        <span class="card-glint" aria-hidden="true"></span>
+        <div class="relative z-10 flex items-start justify-between gap-4">
+          <div class="portal-icon-wrap w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-teal-400/15 border border-teal-300/35 flex items-center justify-center text-teal-300 shadow-[0_8px_28px_rgba(45,212,191,0.28)]">
+            <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M14 23.5C14 23.5 21 17.4 21 11.5C21 7.63 17.87 4.5 14 4.5C10.13 4.5 7 7.63 7 11.5C7 17.4 14 23.5 14 23.5Z"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linejoin="round"
+              />
+              <circle cx="14" cy="11.5" r="2.7" stroke="currentColor" stroke-width="1.7" />
+              <path
+                d="M4.5 22.8L9.2 21L14 23.5L18.8 21L23.5 22.8"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-opacity="0.7"
+              />
+            </svg>
+          </div>
+          <span
+            title="Press key = to launch"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.08] border border-white/[0.14] text-xs font-semibold text-slate-200 group-hover:border-teal-300/55 group-hover:text-teal-200 transition-colors"
+          >
+            =
+          </span>
+        </div>
+
+        <div class="relative z-10 mt-6">
+          <h2 class="font-display text-xl font-bold text-white tracking-tight group-hover:text-teal-100 transition-colors">
+            Maps Game
+          </h2>
+          <p class="mt-2 text-sm text-slate-200/85 leading-relaxed">
+            Explore the globe, pinpoint iconic locations &amp; test your geography skills
+          </p>
+
+          <div class="mt-5 pt-4 border-t border-white/[0.1] flex items-center justify-between text-xs font-medium text-teal-300">
+            <span class="tracking-wide uppercase text-[11px] font-semibold">Launch Portal</span>
+            <span class="portal-arrow inline-flex items-center justify-center w-7 h-7 rounded-full bg-teal-400/20 text-teal-200 group-hover:bg-teal-400 group-hover:text-slate-950">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Portal 13: Word Game (Kept at Bottom) -->
+      <a
+        id="portal-13"
+        href="https://word-game-e9l.pages.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-index="13"
         data-name="Word Game"
         data-aura="rgba(167, 139, 250, 0.26)"
         data-edge="rgba(167, 139, 250, 0.16)"
-        data-note="987.77"
-        class="portal-card card-wordgame group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[244px] sm:min-h-[258px] animate-card-12"
+        data-note="1046.50"
+        class="portal-card card-wordgame group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[244px] sm:min-h-[258px] animate-card-13"
       >
         <span class="card-glint" aria-hidden="true"></span>
         <div class="relative z-10 flex items-start justify-between gap-4">
@@ -1379,10 +1472,10 @@
             </svg>
           </div>
           <span
-            title="Press key = to launch"
+            title="Press key W to launch"
             class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.08] border border-white/[0.14] text-xs font-semibold text-slate-200 group-hover:border-violet-300/55 group-hover:text-violet-200 transition-colors"
           >
-            =
+            W
           </span>
         </div>
 
@@ -1412,8 +1505,9 @@
         Tip: Press
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">1</kbd>–<kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">9</kbd>,
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">0</kbd>,
-        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">-</kbd>, or
-        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">=</kbd>
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">-</kbd>,
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">=</kbd>, or
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">W</kbd>
         to open any portal.
       </p>
     </div>
@@ -1503,6 +1597,9 @@
     (function () {
       'use strict';
 
+      const prefersReducedMotion =
+        window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
       // =========================================================================
       // 1. Toast Notification Helper
       // =========================================================================
@@ -1570,7 +1667,6 @@
         }
       }
 
-      // Unlock AudioContext on first user gesture
       window.addEventListener('pointerdown', () => getAudioContext(), { once: true });
 
       if (soundToggle) {
@@ -1620,14 +1716,13 @@
 
       if (bgVideo) {
         bgVideo.addEventListener('loadeddata', () => {
-          markVideoReady('Live Cosmic Video · 12 Destinations');
+          markVideoReady('Live Cosmic Video · 13 Destinations');
         });
         bgVideo.addEventListener('canplay', () => {
-          markVideoReady('Live Cosmic Video · 12 Destinations');
+          markVideoReady('Live Cosmic Video · 13 Destinations');
         });
-        // Attempt immediate playback if browser already buffered
         if (bgVideo.readyState >= 2) {
-          markVideoReady('Live Cosmic Video · 12 Destinations');
+          markVideoReady('Live Cosmic Video · 13 Destinations');
         }
       }
 
@@ -1647,11 +1742,11 @@
           bgVideo
             .play()
             .then(() => {
-              markVideoReady('Custom Video Active · 12 Destinations');
+              markVideoReady('Custom Video Active · 13 Destinations');
               showToast(`Loaded "${file.name}"`, 2200);
             })
             .catch(() => {
-              markVideoReady('Custom Video Ready · 12 Destinations');
+              markVideoReady('Custom Video Ready · 13 Destinations');
             });
         } catch (err) {
           showToast('Could not load that video file', 2200);
@@ -1666,20 +1761,17 @@
         });
       }
 
-      // Drag & drop any video directly onto the window
+      // Drag-and-drop video replacement onto window
       let dragDepth = 0;
       window.addEventListener('dragenter', (e) => {
         if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
-          e.preventDefault();
           dragDepth++;
           if (videoDropOverlay) videoDropOverlay.classList.add('is-visible');
         }
       });
 
       window.addEventListener('dragover', (e) => {
-        if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
-          e.preventDefault();
-        }
+        e.preventDefault();
       });
 
       window.addEventListener('dragleave', () => {
@@ -1690,299 +1782,285 @@
       });
 
       window.addEventListener('drop', (e) => {
+        e.preventDefault();
         dragDepth = 0;
         if (videoDropOverlay) videoDropOverlay.classList.remove('is-visible');
-        const files = e.dataTransfer && e.dataTransfer.files;
-        if (files && files.length > 0) {
-          e.preventDefault();
-          loadLocalVideoFile(files[0]);
-        }
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        if (file) loadLocalVideoFile(file);
       });
 
       // =========================================================================
-      // 4. Subtle Shooting Stars Overlay (Original Video Backdrop, No Static Stars)
+      // 4. Subtle Shooting Stars Canvas (No Static Background Stars)
       // =========================================================================
-      const shootingStarsCanvas = document.getElementById('shooting-stars-canvas');
-      const shootingStarsCtx = shootingStarsCanvas ? shootingStarsCanvas.getContext('2d') : null;
-      let skyW = Math.max(1, window.innerWidth || 0);
-      let skyH = Math.max(1, window.innerHeight || 0);
-      let skyDpr = Math.min(window.devicePixelRatio || 1, 2);
-      let skyInitializedWithSize = false;
-
+      const shootingCanvas = document.getElementById('shooting-stars-canvas');
+      const shootingCtx = shootingCanvas ? shootingCanvas.getContext('2d') : null;
+      let shootW = 1;
+      let shootH = 1;
       let shootingStars = [];
-      let lastSkyTime = 0;
+      let nextShootDelay = 2400;
+      let lastShootTimestamp = 0;
 
-      // Shared parallax state for the blurred video backdrop
-      let targetParallaxX = 0;
-      let targetParallaxY = 0;
-      let currentParallaxX = 0;
-      let currentParallaxY = 0;
+      function resizeShootingCanvas() {
+        if (!shootingCanvas || !shootingCtx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        shootW = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+        shootH = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+        shootingCanvas.width = Math.floor(shootW * dpr);
+        shootingCanvas.height = Math.floor(shootH * dpr);
+        shootingCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
 
-      function initShootingStars() {
-        const rawW = window.innerWidth || document.documentElement.clientWidth || 0;
-        const rawH = window.innerHeight || document.documentElement.clientHeight || 0;
-        skyW = Math.max(1, rawW);
-        skyH = Math.max(1, rawH);
-        skyInitializedWithSize = rawW > 1 && rawH > 1;
-        skyDpr = Math.min(window.devicePixelRatio || 1, 2);
-
-        if (shootingStarsCanvas && shootingStarsCtx) {
-          shootingStarsCanvas.width = Math.floor(skyW * skyDpr);
-          shootingStarsCanvas.height = Math.floor(skyH * skyDpr);
-          shootingStarsCtx.setTransform(skyDpr, 0, 0, skyDpr, 0, 0);
-        }
-
-        shootingStars = [];
+      function spawnShootingStar() {
+        const fromLeft = Math.random() < 0.6;
+        const startX = fromLeft ? Math.random() * shootW * 0.65 : shootW * (0.35 + Math.random() * 0.65);
+        const startY = Math.random() * shootH * 0.42;
+        const angle = fromLeft ? 0.34 + Math.random() * 0.28 : Math.PI - (0.34 + Math.random() * 0.28);
+        const speed = 520 + Math.random() * 360;
+        shootingStars.push({
+          x: startX,
+          y: startY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          length: 95 + Math.random() * 90,
+          life: 0,
+          maxLife: 0.72 + Math.random() * 0.45,
+          width: 1.2 + Math.random() * 0.9,
+        });
       }
 
       function renderShootingStars(timestamp) {
-        const now = Number.isFinite(timestamp) ? timestamp : performance.now();
-        const rawDt = lastSkyTime ? (now - lastSkyTime) / 1000 : 0.016;
-        const dt = Number.isFinite(rawDt) ? Math.max(0, Math.min(0.05, rawDt)) : 0.016;
-        lastSkyTime = now;
+        if (!shootingCtx) return;
+        const safeTime = Number.isFinite(timestamp) ? timestamp : performance.now();
+        const dt = lastShootTimestamp ? Math.min(0.05, Math.max(0.001, (safeTime - lastShootTimestamp) / 1000)) : 0.016;
+        lastShootTimestamp = safeTime;
 
-        if (!skyInitializedWithSize && window.innerWidth > 1 && window.innerHeight > 1) {
-          initShootingStars();
-          resizeSparkleCanvas();
+        if (shootW <= 1 || shootH <= 1) {
+          resizeShootingCanvas();
         }
 
-        if (!Number.isFinite(skyW) || !Number.isFinite(skyH) || skyW < 2 || skyH < 2) {
-          requestAnimationFrame(renderShootingStars);
-          return;
+        shootingCtx.clearRect(0, 0, shootW, shootH);
+
+        if (!prefersReducedMotion) {
+          nextShootDelay -= dt * 1000;
+          if (nextShootDelay <= 0 && shootingStars.length < 2) {
+            spawnShootingStar();
+            nextShootDelay = 4200 + Math.random() * 5600;
+          }
         }
 
-        if (shootingStarsCtx) {
-          shootingStarsCtx.clearRect(0, 0, skyW, skyH);
-
-          // Spawn occasional graceful shooting stars across the upper sky
-          if (shootingStars.length < 2 && Math.random() < 0.0045) {
-            const fromRight = Math.random() < 0.35;
-            const speedX = (280 + Math.random() * 220) * (fromRight ? -1 : 1);
-            const speedY = 95 + Math.random() * 110;
-            shootingStars.push({
-              x: fromRight ? skyW * (0.35 + Math.random() * 0.65) : Math.random() * skyW * 0.72,
-              y: Math.random() * skyH * 0.42,
-              vx: speedX,
-              vy: speedY,
-              life: 0,
-              maxLife: 0.85 + Math.random() * 0.55,
-              width: 1.5 + Math.random() * 1.1,
-            });
+        for (let i = shootingStars.length - 1; i >= 0; i--) {
+          const s = shootingStars[i];
+          s.life += dt;
+          if (s.life >= s.maxLife) {
+            shootingStars.splice(i, 1);
+            continue;
           }
 
-          for (let i = shootingStars.length - 1; i >= 0; i--) {
-            const st = shootingStars[i];
-            st.life += dt;
-            st.x += st.vx * dt;
-            st.y += st.vy * dt;
-            const progress = st.life / st.maxLife;
-            if (progress >= 1) {
-              shootingStars.splice(i, 1);
-              continue;
-            }
+          s.x += s.vx * dt;
+          s.y += s.vy * dt;
 
-            const alpha = Math.sin(progress * Math.PI) * 0.55;
-            const tailX = st.x - st.vx * 0.2;
-            const tailY = st.y - st.vy * 0.2;
-            if (
-              !Number.isFinite(st.x) ||
-              !Number.isFinite(st.y) ||
-              !Number.isFinite(tailX) ||
-              !Number.isFinite(tailY)
-            ) {
-              continue;
-            }
+          const progress = s.life / s.maxLife;
+          const fade = Math.sin(progress * Math.PI);
+          const mag = Math.hypot(s.vx, s.vy) || 1;
+          const tailX = s.x - (s.vx / mag) * s.length;
+          const tailY = s.y - (s.vy / mag) * s.length;
 
-            // Luminous streak tail
-            const grad = shootingStarsCtx.createLinearGradient(st.x, st.y, tailX, tailY);
-            grad.addColorStop(0, `rgba(255, 252, 240, ${alpha})`);
-            grad.addColorStop(0.35, `rgba(253, 230, 138, ${alpha * 0.5})`);
-            grad.addColorStop(1, 'rgba(255, 250, 235, 0)');
-            shootingStarsCtx.strokeStyle = grad;
-            shootingStarsCtx.lineWidth = st.width;
-            shootingStarsCtx.lineCap = 'round';
-            shootingStarsCtx.beginPath();
-            shootingStarsCtx.moveTo(st.x, st.y);
-            shootingStarsCtx.lineTo(tailX, tailY);
-            shootingStarsCtx.stroke();
-
-            // Soft star head glow
-            const headGlow = shootingStarsCtx.createRadialGradient(st.x, st.y, 0, st.x, st.y, st.width * 3.2);
-            headGlow.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
-            headGlow.addColorStop(1, 'rgba(255, 250, 235, 0)');
-            shootingStarsCtx.fillStyle = headGlow;
-            shootingStarsCtx.beginPath();
-            shootingStarsCtx.arc(st.x, st.y, st.width * 3.2, 0, Math.PI * 2);
-            shootingStarsCtx.fill();
+          if (!Number.isFinite(s.x) || !Number.isFinite(s.y) || !Number.isFinite(tailX) || !Number.isFinite(tailY)) {
+            shootingStars.splice(i, 1);
+            continue;
           }
+
+          const grad = shootingCtx.createLinearGradient(s.x, s.y, tailX, tailY);
+          grad.addColorStop(0, `rgba(255, 250, 232, ${(0.82 * fade).toFixed(3)})`);
+          grad.addColorStop(0.3, `rgba(253, 214, 138, ${(0.38 * fade).toFixed(3)})`);
+          grad.addColorStop(1, 'rgba(253, 214, 138, 0)');
+
+          shootingCtx.strokeStyle = grad;
+          shootingCtx.lineWidth = s.width;
+          shootingCtx.lineCap = 'round';
+          shootingCtx.beginPath();
+          shootingCtx.moveTo(s.x, s.y);
+          shootingCtx.lineTo(tailX, tailY);
+          shootingCtx.stroke();
+
+          // Soft head glow
+          const headGrad = shootingCtx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 5.5);
+          headGrad.addColorStop(0, `rgba(255, 253, 245, ${(0.75 * fade).toFixed(3)})`);
+          headGrad.addColorStop(1, 'rgba(255, 253, 245, 0)');
+          shootingCtx.fillStyle = headGrad;
+          shootingCtx.beginPath();
+          shootingCtx.arc(s.x, s.y, 5.5, 0, Math.PI * 2);
+          shootingCtx.fill();
         }
 
         requestAnimationFrame(renderShootingStars);
       }
 
       // =========================================================================
-      // 5. Soft Blurred Magic Cursor, Ambient Color Wash & Whisper Dust Trail
+      // 5. Blurred Mouse-Following Circle, Whisper Dust Trail & Smooth Parallax
       // =========================================================================
       const cursorAura = document.getElementById('cursor-aura');
-      const cursorRing = document.getElementById('magic-cursor-ring');
-      const cursorDot = document.getElementById('magic-cursor-dot');
+      const magicRing = document.getElementById('magic-cursor-ring');
+      const magicDot = document.getElementById('magic-cursor-dot');
       const sparkleCanvas = document.getElementById('sparkle-canvas');
       const sparkleCtx = sparkleCanvas ? sparkleCanvas.getContext('2d') : null;
-      const portalCards = Array.from(document.querySelectorAll('.portal-card'));
 
-      let sparkleW = Math.max(1, window.innerWidth || 0);
-      let sparkleH = Math.max(1, window.innerHeight || 0);
-      let sparkleDpr = Math.min(window.devicePixelRatio || 1, 2);
+      let sparkleW = 1;
+      let sparkleH = 1;
+      let dustParticles = [];
 
-      const defaultAuraRgb = [245, 185, 95];
-      const defaultEdgeRgb = [129, 140, 248];
-      let currentAuraRgb = [...defaultAuraRgb];
-      let targetAuraRgb = [...defaultAuraRgb];
-      let currentEdgeRgb = [...defaultEdgeRgb];
-      let targetEdgeRgb = [...defaultEdgeRgb];
-      let currentAuraAlpha = 0.14;
-      let targetAuraAlpha = 0.14;
-      let currentEdgeAlpha = 0.06;
-      let targetEdgeAlpha = 0.06;
+      const pointer = {
+        x: window.innerWidth * 0.5,
+        y: window.innerHeight * 0.5,
+        visible: false,
+      };
 
-      let pointerActive = false;
-      let pointerX = sparkleW / 2;
-      let pointerY = sparkleH / 2;
-      let auraX = pointerX;
-      let auraY = pointerY;
-      let ringX = pointerX;
-      let ringY = pointerY;
-      let dotX = pointerX;
-      let dotY = pointerY;
-      let lastDustX = pointerX;
-      let lastDustY = pointerY;
+      const smoothAura = { x: pointer.x, y: pointer.y };
+      const smoothRing = { x: pointer.x, y: pointer.y };
+      const smoothDot = { x: pointer.x, y: pointer.y };
+      const smoothParallax = { x: 0, y: 0 };
 
-      const dustMotes = [];
-      let lastInteractiveTime = 0;
+      // Smoothly interpolated ambient color state
+      const colorState = {
+        auraR: 245, auraG: 185, auraB: 95, auraA: 0.14,
+        targetAuraR: 245, targetAuraG: 185, targetAuraB: 95, targetAuraA: 0.14,
+        edgeR: 129, edgeG: 140, edgeB: 248, edgeA: 0.06,
+        targetEdgeR: 129, targetEdgeG: 140, targetEdgeB: 248, targetEdgeA: 0.06,
+      };
 
-      function parseRgbString(colorStr, fallback) {
-        if (!colorStr) return [...fallback];
-        const match = colorStr.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
-        if (!match) return [...fallback];
-        return [parseFloat(match[1]), parseFloat(match[2]), parseFloat(match[3])];
+      function parseRgba(str, fallback) {
+        if (!str || typeof str !== 'string') return fallback;
+        const match = str.match(/[\d.]+/g);
+        if (!match || match.length < 3) return fallback;
+        return {
+          r: Number(match[0]) || fallback.r,
+          g: Number(match[1]) || fallback.g,
+          b: Number(match[2]) || fallback.b,
+          a: match[3] !== undefined ? Number(match[3]) : fallback.a,
+        };
+      }
+
+      function setAmbientTargets(auraStr, edgeStr) {
+        const a = parseRgba(auraStr, { r: 245, g: 185, b: 95, a: 0.14 });
+        const e = parseRgba(edgeStr, { r: 129, g: 140, b: 248, a: 0.06 });
+        colorState.targetAuraR = a.r;
+        colorState.targetAuraG = a.g;
+        colorState.targetAuraB = a.b;
+        colorState.targetAuraA = Math.min(0.22, a.a);
+        colorState.targetEdgeR = e.r;
+        colorState.targetEdgeG = e.g;
+        colorState.targetEdgeB = e.b;
+        colorState.targetEdgeA = Math.min(0.14, e.a);
+      }
+
+      function resetAmbientTargets() {
+        colorState.targetAuraR = 245;
+        colorState.targetAuraG = 185;
+        colorState.targetAuraB = 95;
+        colorState.targetAuraA = 0.14;
+        colorState.targetEdgeR = 129;
+        colorState.targetEdgeG = 140;
+        colorState.targetEdgeB = 248;
+        colorState.targetEdgeA = 0.06;
       }
 
       function resizeSparkleCanvas() {
-        const rawW = window.innerWidth || document.documentElement.clientWidth || 0;
-        const rawH = window.innerHeight || document.documentElement.clientHeight || 0;
-        sparkleW = Math.max(1, rawW);
-        sparkleH = Math.max(1, rawH);
-        sparkleDpr = Math.min(window.devicePixelRatio || 1, 2);
-
-        if (sparkleCanvas && sparkleCtx) {
-          sparkleCanvas.width = Math.floor(sparkleW * sparkleDpr);
-          sparkleCanvas.height = Math.floor(sparkleH * sparkleDpr);
-          sparkleCtx.setTransform(sparkleDpr, 0, 0, sparkleDpr, 0, 0);
-        }
+        if (!sparkleCanvas || !sparkleCtx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        sparkleW = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+        sparkleH = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+        sparkleCanvas.width = Math.floor(sparkleW * dpr);
+        sparkleCanvas.height = Math.floor(sparkleH * dpr);
+        sparkleCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
 
-      function spawnBurst(x, y, count = 7) {
-        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      function spawnDustMote(x, y, count = 1, burst = false) {
+        if (prefersReducedMotion || dustParticles.length > 48) return;
         for (let i = 0; i < count; i++) {
-          if (dustMotes.length > 55) dustMotes.shift();
           const angle = Math.random() * Math.PI * 2;
-          const speed = 16 + Math.random() * 44;
-          dustMotes.push({
-            x,
-            y,
+          const speed = burst ? 0.5 + Math.random() * 1.6 : 0.12 + Math.random() * 0.42;
+          dustParticles.push({
+            x: x + (Math.random() - 0.5) * (burst ? 8 : 10),
+            y: y + (Math.random() - 0.5) * (burst ? 8 : 10),
             vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed - 8,
-            radius: 1.8 + Math.random() * 2.4,
-            life: 0,
-            maxLife: 0.65 + Math.random() * 0.45,
-            rgb: [
-              Math.round(currentAuraRgb[0]),
-              Math.round(currentAuraRgb[1]),
-              Math.round(currentAuraRgb[2]),
-            ],
+            vy: Math.sin(angle) * speed - (burst ? 0.15 : 0.12),
+            radius: burst ? 2.2 + Math.random() * 2.4 : 1.6 + Math.random() * 2.2,
+            alpha: burst ? 0.42 : 0.28,
+            decay: burst ? 0.016 + Math.random() * 0.01 : 0.012 + Math.random() * 0.008,
+            r: Math.round(colorState.auraR),
+            g: Math.round(colorState.auraG),
+            b: Math.round(colorState.auraB),
           });
         }
       }
 
-      function setCursorVisibility(visible) {
-        pointerActive = visible;
-        const opacityVal = visible ? '1' : '0';
-        if (cursorAura) cursorAura.style.opacity = opacityVal;
-        if (cursorRing) cursorRing.style.opacity = opacityVal;
-        if (cursorDot) cursorDot.style.opacity = opacityVal;
-      }
+      let lastDustX = 0;
+      let lastDustY = 0;
 
       window.addEventListener(
         'pointermove',
         (e) => {
-          if (e.pointerType === 'touch') return;
-          pointerX = e.clientX;
-          pointerY = e.clientY;
-          if (!pointerActive) {
-            auraX = pointerX;
-            auraY = pointerY;
-            ringX = pointerX;
-            ringY = pointerY;
-            dotX = pointerX;
-            dotY = pointerY;
-            setCursorVisibility(true);
+          pointer.x = e.clientX;
+          pointer.y = e.clientY;
+          if (!pointer.visible) {
+            pointer.visible = true;
+            smoothAura.x = pointer.x;
+            smoothAura.y = pointer.y;
+            smoothRing.x = pointer.x;
+            smoothRing.y = pointer.y;
+            smoothDot.x = pointer.x;
+            smoothDot.y = pointer.y;
+            if (cursorAura) cursorAura.style.opacity = '1';
+            if (magicRing) magicRing.style.opacity = '1';
+            if (magicDot) magicDot.style.opacity = '1';
           }
 
-          // Gentle parallax offset for the blurred video layer
-          const normX = sparkleW > 1 ? pointerX / sparkleW - 0.5 : 0;
-          const normY = sparkleH > 1 ? pointerY / sparkleH - 0.5 : 0;
-          targetParallaxX = -normX * 18;
-          targetParallaxY = -normY * 14;
-
-          // Spawn whisper-soft dust motes along pointer movement
-          const dist = Math.hypot(pointerX - lastDustX, pointerY - lastDustY);
-          if (dist > 22) {
-            lastDustX = pointerX;
-            lastDustY = pointerY;
-            if (dustMotes.length < 48) {
-              dustMotes.push({
-                x: pointerX + (Math.random() - 0.5) * 6,
-                y: pointerY + (Math.random() - 0.5) * 6,
-                vx: (Math.random() - 0.5) * 14,
-                vy: -6 - Math.random() * 12,
-                radius: 1.5 + Math.random() * 2.1,
-                life: 0,
-                maxLife: 0.6 + Math.random() * 0.45,
-                rgb: [
-                  Math.round(currentAuraRgb[0]),
-                  Math.round(currentAuraRgb[1]),
-                  Math.round(currentAuraRgb[2]),
-                ],
-              });
-            }
+          const dist = Math.hypot(pointer.x - lastDustX, pointer.y - lastDustY);
+          if (dist > 26 && e.pointerType !== 'touch') {
+            spawnDustMote(pointer.x, pointer.y, 1, false);
+            lastDustX = pointer.x;
+            lastDustY = pointer.y;
           }
         },
         { passive: true }
       );
 
-      document.addEventListener('mouseleave', () => {
-        setCursorVisibility(false);
-        targetParallaxX = 0;
-        targetParallaxY = 0;
+      document.addEventListener('pointerleave', () => {
+        pointer.visible = false;
+        if (cursorAura) cursorAura.style.opacity = '0';
+        if (magicRing) magicRing.style.opacity = '0';
+        if (magicDot) magicDot.style.opacity = '0';
       });
 
-      window.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'touch') return;
-        if (cursorRing) cursorRing.classList.add('is-clicking');
-        spawnBurst(e.clientX, e.clientY, 5);
-      });
+      window.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (magicRing) magicRing.classList.add('is-clicking');
+          if (e.pointerType !== 'touch') {
+            spawnDustMote(e.clientX, e.clientY, 5, true);
+          }
+        },
+        { passive: true }
+      );
 
-      window.addEventListener('pointerup', () => {
-        if (cursorRing) cursorRing.classList.remove('is-clicking');
-      });
+      window.addEventListener(
+        'pointerup',
+        () => {
+          if (magicRing) magicRing.classList.remove('is-clicking');
+        },
+        { passive: true }
+      );
 
       // =========================================================================
-      // 6. Smooth 3D Card Tilt, Lift & Reactive Color Accents
+      // 6. Smooth 3D Pop-Up Card State & Damped Hover Physics
       // =========================================================================
+      const portalCards = Array.from(document.querySelectorAll('.portal-card'));
       const cardStates = new Map();
 
       portalCards.forEach((card) => {
         const state = {
+          el: card,
+          hovered: false,
           tiltX: 0,
           tiltY: 0,
           targetTiltX: 0,
@@ -1994,176 +2072,173 @@
         };
         cardStates.set(card, state);
 
-        const activateCard = () => {
-          state.targetLiftY = -9;
-          state.targetScale = 1.022;
-          targetAuraRgb = parseRgbString(card.getAttribute('data-aura'), defaultAuraRgb);
-          targetEdgeRgb = parseRgbString(card.getAttribute('data-edge'), defaultEdgeRgb);
-          targetAuraAlpha = 0.2;
-          targetEdgeAlpha = 0.14;
-          if (cursorRing) cursorRing.classList.add('is-hovering');
-          if (cursorDot) cursorDot.classList.add('is-hovering');
-          const noteFreq = parseFloat(card.getAttribute('data-note')) || 587.33;
-          playCosmicTone(noteFreq, 0.014, 0.18);
-        };
-
-        const deactivateCard = () => {
-          state.targetTiltX = 0;
-          state.targetTiltY = 0;
-          state.targetLiftY = 0;
-          state.targetScale = 1;
-          targetAuraRgb = [...defaultAuraRgb];
-          targetEdgeRgb = [...defaultEdgeRgb];
-          targetAuraAlpha = 0.14;
-          targetEdgeAlpha = 0.06;
-          if (cursorRing) cursorRing.classList.remove('is-hovering');
-          if (cursorDot) cursorDot.classList.remove('is-hovering');
-        };
-
         card.addEventListener('pointerenter', (e) => {
-          if (e.pointerType === 'touch') return;
-          activateCard();
+          state.hovered = true;
+          state.targetLiftY = -10;
+          state.targetScale = 1.024;
+          if (magicRing) magicRing.classList.add('is-hovering');
+          if (magicDot) magicDot.classList.add('is-hovering');
+
+          setAmbientTargets(card.dataset.aura, card.dataset.edge);
+
+          const note = parseFloat(card.dataset.note);
+          if (e.pointerType !== 'touch' && Number.isFinite(note)) {
+            playCosmicTone(note, 0.016, 0.18);
+          }
         });
 
         card.addEventListener('pointermove', (e) => {
           if (e.pointerType === 'touch') return;
           const rect = card.getBoundingClientRect();
           if (rect.width <= 0 || rect.height <= 0) return;
+
           const relX = (e.clientX - rect.left) / rect.width;
           const relY = (e.clientY - rect.top) / rect.height;
+
           card.style.setProperty('--mouse-x', `${(relX * 100).toFixed(1)}%`);
           card.style.setProperty('--mouse-y', `${(relY * 100).toFixed(1)}%`);
-          state.targetTiltY = (relX - 0.5) * 9;
-          state.targetTiltX = (0.5 - relY) * 8;
+
+          if (!prefersReducedMotion) {
+            state.targetTiltY = (relX - 0.5) * 8;
+            state.targetTiltX = (0.5 - relY) * 8;
+          }
         });
 
-        card.addEventListener('pointerleave', deactivateCard);
-        card.addEventListener('focus', activateCard);
-        card.addEventListener('blur', deactivateCard);
+        card.addEventListener('pointerleave', () => {
+          state.hovered = false;
+          state.targetTiltX = 0;
+          state.targetTiltY = 0;
+          state.targetLiftY = 0;
+          state.targetScale = 1;
+          if (magicRing) magicRing.classList.remove('is-hovering');
+          if (magicDot) magicDot.classList.remove('is-hovering');
+          resetAmbientTargets();
+        });
 
-        card.addEventListener('click', (e) => {
-          const name = card.getAttribute('data-name') || 'Portal';
-          const rect = card.getBoundingClientRect();
-          const cx = e.clientX || rect.left + rect.width / 2;
-          const cy = e.clientY || rect.top + rect.height / 2;
-          spawnBurst(cx, cy, 8);
-          playCosmicTone(880, 0.02, 0.22);
-          showToast(`Opening ${name}...`, 1600);
+        card.addEventListener('focus', () => {
+          state.targetLiftY = -8;
+          state.targetScale = 1.02;
+          setAmbientTargets(card.dataset.aura, card.dataset.edge);
+        });
+
+        card.addEventListener('blur', () => {
+          if (!state.hovered) {
+            state.targetLiftY = 0;
+            state.targetScale = 1;
+            resetAmbientTargets();
+          }
+        });
+
+        card.addEventListener('click', () => {
+          const name = card.dataset.name || 'portal';
+          const note = parseFloat(card.dataset.note) || 659.25;
+          playCosmicTone(note * 1.25, 0.024, 0.24);
+          showToast(`Opening ${name}...`, 1900);
         });
       });
 
-      function renderInteractiveLoop(timestamp) {
-        const now = Number.isFinite(timestamp) ? timestamp : performance.now();
-        const rawDt = lastInteractiveTime ? (now - lastInteractiveTime) / 1000 : 0.016;
-        const dt = Number.isFinite(rawDt) ? Math.max(0, Math.min(0.05, rawDt)) : 0.016;
-        lastInteractiveTime = now;
+      function renderInteractiveLoop() {
+        // 1. Smoothly lerp ambient aura & edge colors
+        const colorLerp = 0.07;
+        colorState.auraR += (colorState.targetAuraR - colorState.auraR) * colorLerp;
+        colorState.auraG += (colorState.targetAuraG - colorState.auraG) * colorLerp;
+        colorState.auraB += (colorState.targetAuraB - colorState.auraB) * colorLerp;
+        colorState.auraA += (colorState.targetAuraA - colorState.auraA) * colorLerp;
 
-        const smoothFactor = 1 - Math.exp(-10 * dt);
-        const slowFactor = 1 - Math.exp(-5.5 * dt);
+        colorState.edgeR += (colorState.targetEdgeR - colorState.edgeR) * colorLerp;
+        colorState.edgeG += (colorState.targetEdgeG - colorState.edgeG) * colorLerp;
+        colorState.edgeB += (colorState.targetEdgeB - colorState.edgeB) * colorLerp;
+        colorState.edgeA += (colorState.targetEdgeA - colorState.edgeA) * colorLerp;
 
-        // Smoothly interpolate background parallax
-        currentParallaxX += (targetParallaxX - currentParallaxX) * slowFactor;
-        currentParallaxY += (targetParallaxY - currentParallaxY) * slowFactor;
-        document.documentElement.style.setProperty('--parallax-x', `${currentParallaxX.toFixed(2)}px`);
-        document.documentElement.style.setProperty('--parallax-y', `${currentParallaxY.toFixed(2)}px`);
-
-        // Smoothly interpolate ambient aura & edge colors
-        for (let i = 0; i < 3; i++) {
-          currentAuraRgb[i] += (targetAuraRgb[i] - currentAuraRgb[i]) * slowFactor;
-          currentEdgeRgb[i] += (targetEdgeRgb[i] - currentEdgeRgb[i]) * slowFactor;
-        }
-        currentAuraAlpha += (targetAuraAlpha - currentAuraAlpha) * slowFactor;
-        currentEdgeAlpha += (targetEdgeAlpha - currentEdgeAlpha) * slowFactor;
-
-        document.documentElement.style.setProperty(
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty(
           '--aura-rgb',
-          `${Math.round(currentAuraRgb[0])}, ${Math.round(currentAuraRgb[1])}, ${Math.round(currentAuraRgb[2])}`
+          `${Math.round(colorState.auraR)}, ${Math.round(colorState.auraG)}, ${Math.round(colorState.auraB)}`
         );
-        document.documentElement.style.setProperty('--aura-alpha', currentAuraAlpha.toFixed(3));
-        document.documentElement.style.setProperty(
+        rootStyle.setProperty('--aura-alpha', colorState.auraA.toFixed(3));
+        rootStyle.setProperty(
           '--edge-rgb',
-          `${Math.round(currentEdgeRgb[0])}, ${Math.round(currentEdgeRgb[1])}, ${Math.round(currentEdgeRgb[2])}`
+          `${Math.round(colorState.edgeR)}, ${Math.round(colorState.edgeG)}, ${Math.round(colorState.edgeB)}`
         );
-        document.documentElement.style.setProperty('--edge-alpha', currentEdgeAlpha.toFixed(3));
+        rootStyle.setProperty('--edge-alpha', colorState.edgeA.toFixed(3));
 
-        // Smoothly follow pointer with blurred cursor layers
-        if (pointerActive) {
-          auraX += (pointerX - auraX) * (1 - Math.exp(-5.5 * dt));
-          auraY += (pointerY - auraY) * (1 - Math.exp(-5.5 * dt));
-          ringX += (pointerX - ringX) * (1 - Math.exp(-11 * dt));
-          ringY += (pointerY - ringY) * (1 - Math.exp(-11 * dt));
-          dotX += (pointerX - dotX) * (1 - Math.exp(-22 * dt));
-          dotY += (pointerY - dotY) * (1 - Math.exp(-22 * dt));
+        // 2. Smoothly follow mouse with blurred aura, blurred circle & core
+        if (pointer.visible) {
+          smoothAura.x += (pointer.x - smoothAura.x) * 0.08;
+          smoothAura.y += (pointer.y - smoothAura.y) * 0.08;
+          smoothRing.x += (pointer.x - smoothRing.x) * 0.14;
+          smoothRing.y += (pointer.y - smoothRing.y) * 0.14;
+          smoothDot.x += (pointer.x - smoothDot.x) * 0.34;
+          smoothDot.y += (pointer.y - smoothDot.y) * 0.34;
 
           if (cursorAura) {
-            cursorAura.style.transform = `translate3d(${auraX.toFixed(1)}px, ${auraY.toFixed(1)}px, 0) translate3d(-50%, -50%, 0)`;
+            cursorAura.style.transform = `translate3d(${smoothAura.x.toFixed(1)}px, ${smoothAura.y.toFixed(1)}px, 0) translate3d(-50%, -50%, 0)`;
           }
-          if (cursorRing) {
-            cursorRing.style.transform = `translate3d(${ringX.toFixed(1)}px, ${ringY.toFixed(1)}px, 0) translate3d(-50%, -50%, 0)`;
+          if (magicRing) {
+            magicRing.style.transform = `translate3d(${smoothRing.x.toFixed(1)}px, ${smoothRing.y.toFixed(1)}px, 0) translate3d(-50%, -50%, 0)`;
           }
-          if (cursorDot) {
-            cursorDot.style.transform = `translate3d(${dotX.toFixed(1)}px, ${dotY.toFixed(1)}px, 0) translate3d(-50%, -50%, 0)`;
+          if (magicDot) {
+            magicDot.style.transform = `translate3d(${smoothDot.x.toFixed(1)}px, ${smoothDot.y.toFixed(1)}px, 0) translate3d(-50%, -50%, 0)`;
           }
         }
 
-        // Smoothly interpolate 3D tilt, lift & scale for all portal cards
-        cardStates.forEach((state, card) => {
-          const isHighlighted = card.classList.contains('is-highlighted');
-          const desiredLift = isHighlighted ? -10 : state.targetLiftY;
-          const desiredScale = isHighlighted ? 1.028 : state.targetScale;
+        // 3. Subtle mouse-driven parallax on the blurred video backdrop
+        if (!prefersReducedMotion && window.innerWidth > 0 && window.innerHeight > 0) {
+          const targetPx = pointer.visible ? ((pointer.x / window.innerWidth) - 0.5) * -18 : 0;
+          const targetPy = pointer.visible ? ((pointer.y / window.innerHeight) - 0.5) * -14 : 0;
+          smoothParallax.x += (targetPx - smoothParallax.x) * 0.05;
+          smoothParallax.y += (targetPy - smoothParallax.y) * 0.05;
+          rootStyle.setProperty('--parallax-x', `${smoothParallax.x.toFixed(2)}px`);
+          rootStyle.setProperty('--parallax-y', `${smoothParallax.y.toFixed(2)}px`);
+        }
 
-          state.tiltX += (state.targetTiltX - state.tiltX) * smoothFactor;
-          state.tiltY += (state.targetTiltY - state.tiltY) * smoothFactor;
-          state.liftY += (desiredLift - state.liftY) * smoothFactor;
-          state.scale += (desiredScale - state.scale) * smoothFactor;
+        // 4. Damped 3D card tilt & lift physics
+        cardStates.forEach((st) => {
+          const lerp = st.hovered ? 0.14 : 0.1;
+          st.tiltX += (st.targetTiltX - st.tiltX) * lerp;
+          st.tiltY += (st.targetTiltY - st.tiltY) * lerp;
+          st.liftY += (st.targetLiftY - st.liftY) * lerp;
+          st.scale += (st.targetScale - st.scale) * lerp;
 
           if (
-            Math.abs(state.tiltX) > 0.01 ||
-            Math.abs(state.tiltY) > 0.01 ||
-            Math.abs(state.liftY) > 0.02 ||
-            Math.abs(state.scale - 1) > 0.0005
+            Math.abs(st.tiltX) > 0.01 ||
+            Math.abs(st.tiltY) > 0.01 ||
+            Math.abs(st.liftY) > 0.01 ||
+            Math.abs(st.scale - 1) > 0.0005 ||
+            st.hovered
           ) {
-            card.style.setProperty('--tilt-x', `${state.tiltX.toFixed(2)}deg`);
-            card.style.setProperty('--tilt-y', `${state.tiltY.toFixed(2)}deg`);
-            card.style.setProperty('--lift-y', `${state.liftY.toFixed(2)}px`);
-            card.style.setProperty('--card-scale', state.scale.toFixed(4));
-          } else {
-            card.style.setProperty('--tilt-x', '0deg');
-            card.style.setProperty('--tilt-y', '0deg');
-            card.style.setProperty('--lift-y', '0px');
-            card.style.setProperty('--card-scale', '1');
+            st.el.style.setProperty('--tilt-x', `${st.tiltX.toFixed(2)}deg`);
+            st.el.style.setProperty('--tilt-y', `${st.tiltY.toFixed(2)}deg`);
+            st.el.style.setProperty('--lift-y', `${st.liftY.toFixed(2)}px`);
+            st.el.style.setProperty('--card-scale', st.scale.toFixed(4));
           }
         });
 
-        // Render whisper-soft blurred dust motes
-        if (sparkleCtx && sparkleW > 1 && sparkleH > 1) {
+        // 5. Render softly blurred cursor dust trail
+        if (sparkleCtx) {
+          if (sparkleW <= 1 || sparkleH <= 1) resizeSparkleCanvas();
           sparkleCtx.clearRect(0, 0, sparkleW, sparkleH);
-          for (let i = dustMotes.length - 1; i >= 0; i--) {
-            const p = dustMotes[i];
-            p.life += dt;
-            if (p.life >= p.maxLife) {
-              dustMotes.splice(i, 1);
-              continue;
-            }
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
-            p.vx *= 0.96;
-            p.vy *= 0.96;
 
-            const progress = p.life / p.maxLife;
-            const alpha = Math.sin(progress * Math.PI) * 0.45;
-            const radius = Math.max(0.2, p.radius * (1 - progress * 0.35));
+          for (let i = dustParticles.length - 1; i >= 0; i--) {
+            const p = dustParticles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vx *= 0.98;
+            p.vy *= 0.98;
+            p.alpha -= p.decay;
 
-            if (!Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(radius)) {
+            if (p.alpha <= 0.005 || !Number.isFinite(p.x) || !Number.isFinite(p.y)) {
+              dustParticles.splice(i, 1);
               continue;
             }
 
-            const grad = sparkleCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 2.4);
-            grad.addColorStop(0, `rgba(${p.rgb[0]}, ${p.rgb[1]}, ${p.rgb[2]}, ${alpha})`);
-            grad.addColorStop(1, `rgba(${p.rgb[0]}, ${p.rgb[1]}, ${p.rgb[2]}, 0)`);
-            sparkleCtx.fillStyle = grad;
+            const g = sparkleCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 2.2);
+            g.addColorStop(0, `rgba(255, 252, 240, ${(p.alpha * 0.9).toFixed(3)})`);
+            g.addColorStop(0.5, `rgba(${p.r}, ${p.g}, ${p.b}, ${(p.alpha * 0.55).toFixed(3)})`);
+            g.addColorStop(1, `rgba(${p.r}, ${p.g}, ${p.b}, 0)`);
+            sparkleCtx.fillStyle = g;
             sparkleCtx.beginPath();
-            sparkleCtx.arc(p.x, p.y, radius * 2.4, 0, Math.PI * 2);
+            sparkleCtx.arc(p.x, p.y, p.radius * 2.2, 0, Math.PI * 2);
             sparkleCtx.fill();
           }
         }
@@ -2172,41 +2247,43 @@
       }
 
       // =========================================================================
-      // 7. Smooth Keyboard Shortcuts (1–9, 0, -, =)
+      // 7. Smooth Keyboard Shortcuts (1–9, 0, -, =, W)
       // =========================================================================
       function launchPortalCard(card) {
         if (!card) return;
-        const name = card.getAttribute('data-name') || 'Portal';
-        const href = card.getAttribute('href');
-        const aura = card.getAttribute('data-aura');
-        const edge = card.getAttribute('data-edge');
+        const name = card.dataset.name || 'portal';
+        const note = parseFloat(card.dataset.note) || 659.25;
+        const st = cardStates.get(card);
 
-        portalCards.forEach((c) => c.classList.remove('is-highlighted'));
         card.classList.add('is-highlighted');
-        targetAuraRgb = parseRgbString(aura, defaultAuraRgb);
-        targetEdgeRgb = parseRgbString(edge, defaultEdgeRgb);
+        if (st) {
+          st.targetLiftY = -10;
+          st.targetScale = 1.024;
+        }
+        setAmbientTargets(card.dataset.aura, card.dataset.edge);
+        playCosmicTone(note * 1.2, 0.025, 0.24);
+        showToast(`Opening ${name}...`, 2000);
 
-        const rect = card.getBoundingClientRect();
-        spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 8);
-        playCosmicTone(880, 0.02, 0.24);
-        showToast(`Opening ${name}...`, 1800);
+        window.open(card.href, '_blank', 'noopener,noreferrer');
 
         setTimeout(() => {
           card.classList.remove('is-highlighted');
-          if (href) {
-            window.open(href, '_blank', 'noopener,noreferrer');
+          if (st && !st.hovered) {
+            st.targetLiftY = 0;
+            st.targetScale = 1;
+            resetAmbientTargets();
           }
-        }, 320);
+        }, 650);
       }
 
       window.addEventListener('keydown', (e) => {
-        if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
         if (e.metaKey || e.ctrlKey || e.altKey) return;
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
-        if (/^[1-9]$/.test(e.key)) {
+        if (e.key >= '1' && e.key <= '9') {
           e.preventDefault();
-          const targetCard = document.getElementById(`portal-${e.key}`);
-          launchPortalCard(targetCard);
+          launchPortalCard(document.getElementById(`portal-${e.key}`));
         } else if (e.key === '0') {
           e.preventDefault();
           launchPortalCard(document.getElementById('portal-10'));
@@ -2216,27 +2293,34 @@
         } else if (e.key === '=') {
           e.preventDefault();
           launchPortalCard(document.getElementById('portal-12'));
+        } else if (e.key === 'w' || e.key === 'W') {
+          e.preventDefault();
+          launchPortalCard(document.getElementById('portal-13'));
         }
       });
 
       // =========================================================================
       // 8. Resize Handling & Animation Startup
       // =========================================================================
-      let resizeTimer = null;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          initShootingStars();
-          resizeSparkleCanvas();
-        }, 120);
-      });
+      let visualsStarted = false;
 
       function startVisuals() {
-        initShootingStars();
+        if (visualsStarted) return;
+        visualsStarted = true;
+        resizeShootingCanvas();
         resizeSparkleCanvas();
         requestAnimationFrame(renderShootingStars);
         requestAnimationFrame(renderInteractiveLoop);
       }
+
+      window.addEventListener(
+        'resize',
+        () => {
+          resizeShootingCanvas();
+          resizeSparkleCanvas();
+        },
+        { passive: true }
+      );
 
       if (document.readyState === 'loading') {
         window.addEventListener('DOMContentLoaded', startVisuals);
