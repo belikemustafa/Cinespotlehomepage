@@ -38,7 +38,7 @@
 
   <style>
     :root {
-      --bg-blur: 5px;
+      --bg-blur: 9px;
       --aura-rgb: 245, 185, 95;
       --aura-alpha: 0.14;
       --edge-rgb: 129, 140, 248;
@@ -68,7 +68,7 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Full-Viewport Blurred Background Video Layer (No Static Background Stars) */
+    /* Full-Viewport Blurred Dark-but-Bright Galaxy Video Layer */
     .bg-media-layer {
       position: fixed;
       inset: 0;
@@ -76,7 +76,7 @@
       overflow: hidden;
       pointer-events: none;
       background:
-        radial-gradient(ellipse at 52% 45%, #121528 0%, #070913 55%, #03040a 100%);
+        radial-gradient(ellipse at 50% 48%, #1d1538 0%, #0b0e1f 48%, #03040a 100%);
       animation: pageReveal 1.05s cubic-bezier(0.16, 1, 0.3, 1) both;
     }
 
@@ -93,34 +93,48 @@
 
     .bg-media-filtered {
       position: absolute;
-      inset: -4%;
-      width: 108%;
-      height: 108%;
-      filter: blur(var(--bg-blur)) brightness(0.95) saturate(1.14);
-      transform: translate3d(var(--parallax-x), var(--parallax-y), 0) scale(1.02);
+      inset: -6%;
+      width: 112%;
+      height: 112%;
+      filter: blur(var(--bg-blur)) brightness(0.88) contrast(1.14) saturate(1.32);
+      transform: translate3d(var(--parallax-x), var(--parallax-y), 0) scale(1.03);
       transition: filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform, filter;
     }
 
+    #galaxy-fallback-canvas,
     #bg-video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 1;
       display: block;
     }
 
-    /* Subtle Cinematic Vignette */
+    #galaxy-fallback-canvas {
+      z-index: 0;
+    }
+
+    #bg-video {
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #bg-video.is-playing {
+      opacity: 1;
+    }
+
+    /* Cinematic Dark Space Vignette — Keeps Edges Deep While Galaxy Glows Through */
     .cosmic-vignette {
       position: fixed;
       inset: 0;
       z-index: 1;
       pointer-events: none;
       background:
-        radial-gradient(ellipse at 50% 42%, rgba(4, 5, 11, 0.06) 0%, rgba(4, 5, 11, 0.34) 64%, rgba(3, 4, 9, 0.74) 100%),
-        linear-gradient(180deg, rgba(4, 5, 11, 0.26) 0%, rgba(4, 5, 11, 0.04) 40%, rgba(4, 5, 11, 0.56) 100%);
+        radial-gradient(ellipse at 50% 44%, rgba(4, 5, 11, 0.08) 0%, rgba(4, 5, 11, 0.34) 60%, rgba(3, 4, 9, 0.78) 100%),
+        linear-gradient(180deg, rgba(4, 5, 11, 0.32) 0%, rgba(4, 5, 11, 0.06) 42%, rgba(4, 5, 11, 0.6) 100%);
     }
 
     /* Smoothly Interpolated Reactive Ambient Edge Wash */
@@ -550,6 +564,11 @@
       --accent-secondary-rgb: 94, 234, 212;
     }
 
+    .card-guessasap {
+      --accent-rgb: 245, 158, 11;
+      --accent-secondary-rgb: 251, 191, 36;
+    }
+
     .card-wordgame {
       --accent-rgb: 167, 139, 250;
       --accent-secondary-rgb: 196, 181, 253;
@@ -611,7 +630,8 @@
     .animate-card-13 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.68s both; }
     .animate-card-14 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.73s both; }
     .animate-card-15 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.78s both; }
-    .animate-footer { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.83s both; }
+    .animate-card-16 { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.83s both; }
+    .animate-footer { animation: fadeSlideUp 0.82s cubic-bezier(0.16, 1, 0.3, 1) 0.88s both; }
 
     /* Custom Range Slider for Blur Pill */
     input[type='range'].blur-slider {
@@ -667,6 +687,9 @@
       .animate-card-11,
       .animate-card-12,
       .animate-card-13,
+      .animate-card-14,
+      .animate-card-15,
+      .animate-card-16,
       .animate-footer,
       .bg-media-layer {
         animation: none;
@@ -680,9 +703,10 @@
   </style>
 </head>
 <body class="relative min-h-screen flex flex-col justify-between selection:bg-amber-400/30 selection:text-amber-100">
-  <!-- Full-Viewport Blurred Original Video Background -->
+  <!-- Full-Viewport Blurred Dark-but-Bright Galaxy Video Background -->
   <div class="bg-media-layer" aria-hidden="true">
     <div class="bg-media-filtered">
+      <canvas id="galaxy-fallback-canvas" aria-hidden="true"></canvas>
       <video
         id="bg-video"
         autoplay
@@ -690,7 +714,9 @@
         loop
         playsinline
         preload="auto"
+        poster="galaxy-poster.jpg"
       >
+        <source src="galaxy-bg.mp4" type="video/mp4" />
         <source src="12336972-hd_1920_1028_60fps.mp4" type="video/mp4" />
         <source src="video_1.mp4" type="video/mp4" />
       </video>
@@ -735,7 +761,7 @@
       <!-- Subtle Live Cosmic Badge -->
       <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.07] border border-white/[0.13] backdrop-blur-md text-xs font-medium text-amber-100/90 mb-4 shadow-sm">
         <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.95)]"></span>
-        <span id="backdrop-mode-label">Cosmic Portal Hub · 15 Destinations</span>
+        <span id="backdrop-mode-label">Cosmic Galaxy Hub · 16 Destinations</span>
       </div>
 
       <!-- CineSpotle Wordmark & Custom Spotlight Emblem -->
@@ -760,7 +786,7 @@
       </p>
     </header>
 
-    <!-- 15 Interactive Portal Tiles Grid -->
+    <!-- 16 Interactive Portal Tiles Grid -->
     <section
       id="portal-grid"
       aria-label="Game & Discovery Portals"
@@ -1581,18 +1607,68 @@
         </div>
       </a>
 
-      <!-- Portal 15: Word Game (Kept at Bottom) -->
+      <!-- Portal 15: GuessASAP -->
       <a
         id="portal-15"
-        href="https://word-game-e9l.pages.dev/"
+        href="https://guessasap.pages.dev/"
         target="_blank"
         rel="noopener noreferrer"
         data-index="15"
+        data-name="GuessASAP"
+        data-aura="rgba(245, 158, 11, 0.28)"
+        data-edge="rgba(245, 158, 11, 0.16)"
+        data-note="1046.50"
+        class="portal-card card-guessasap group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[244px] sm:min-h-[258px] animate-card-15"
+      >
+        <span class="card-glint" aria-hidden="true"></span>
+        <div class="relative z-10 flex items-start justify-between gap-4">
+          <div class="portal-icon-wrap w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-amber-400/15 border border-amber-300/35 flex items-center justify-center text-amber-300 shadow-[0_8px_28px_rgba(245,158,11,0.3)]">
+            <svg class="w-7 h-7" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="14" cy="15.5" r="8.2" stroke="currentColor" stroke-width="1.8" />
+              <path d="M11 4.2H17M14 4.2V7.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              <path d="M14 11.4V15.5L16.9 17.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M20.2 8.2L22 6.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </svg>
+          </div>
+          <span
+            title="Press key A to launch"
+            class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/[0.08] border border-white/[0.14] text-xs font-semibold text-slate-200 group-hover:border-amber-300/55 group-hover:text-amber-200 transition-colors"
+          >
+            A
+          </span>
+        </div>
+
+        <div class="relative z-10 mt-6">
+          <h2 class="font-display text-xl font-bold text-white tracking-tight group-hover:text-amber-100 transition-colors">
+            GuessASAP
+          </h2>
+          <p class="mt-2 text-sm text-slate-200/85 leading-relaxed">
+            50 seconds, 10 progressive clues — guess 300+ global, Indian &amp; historical icons fast
+          </p>
+
+          <div class="mt-5 pt-4 border-t border-white/[0.1] flex items-center justify-between text-xs font-medium text-amber-300">
+            <span class="tracking-wide uppercase text-[11px] font-semibold">Launch Portal</span>
+            <span class="portal-arrow inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-400/20 text-amber-200 group-hover:bg-amber-400 group-hover:text-slate-950">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none">
+                <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Portal 16: Word Game (Kept at Bottom) -->
+      <a
+        id="portal-16"
+        href="https://word-game-e9l.pages.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-index="16"
         data-name="Word Game"
         data-aura="rgba(167, 139, 250, 0.26)"
         data-edge="rgba(167, 139, 250, 0.16)"
-        data-note="1046.50"
-        class="portal-card card-wordgame group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[244px] sm:min-h-[258px] animate-card-15"
+        data-note="1174.66"
+        class="portal-card card-wordgame group p-6 w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] min-h-[244px] sm:min-h-[258px] animate-card-16"
       >
         <span class="card-glint" aria-hidden="true"></span>
         <div class="relative z-10 flex items-start justify-between gap-4">
@@ -1641,7 +1717,8 @@
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">-</kbd>,
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">=</kbd>,
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">G</kbd>,
-        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">M</kbd>, or
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">M</kbd>,
+        <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">A</kbd>, or
         <kbd class="px-1.5 py-0.5 rounded bg-white/[0.09] border border-white/[0.15] text-slate-100 font-sans">W</kbd>
         to open any portal.
       </p>
@@ -1678,14 +1755,14 @@
       id="blur-slider"
       type="range"
       min="0"
-      max="20"
+      max="24"
       step="0.5"
-      value="5"
+      value="9"
       aria-label="Background blur level"
       class="blur-slider"
     />
 
-    <span id="blur-value" class="w-9 text-right tabular-nums text-[11px] font-semibold text-amber-200">5px</span>
+    <span id="blur-value" class="w-9 text-right tabular-nums text-[11px] font-semibold text-amber-200">9px</span>
 
     <span class="h-3.5 w-px bg-white/15" aria-hidden="true"></span>
 
@@ -1819,19 +1896,22 @@
       }
 
       // =========================================================================
-      // 3. Background Video Loader, Drag & Drop Support & Blur Slider
+      // 3. Background Galaxy Video Loader, Instant Canvas Fallback & Blur Slider
       // =========================================================================
       const bgVideo = document.getElementById('bg-video');
+      const galaxyFallbackCanvas = document.getElementById('galaxy-fallback-canvas');
+      const galaxyFallbackCtx = galaxyFallbackCanvas ? galaxyFallbackCanvas.getContext('2d') : null;
       const blurSlider = document.getElementById('blur-slider');
       const blurValue = document.getElementById('blur-value');
       const videoFileInput = document.getElementById('video-file-input');
       const videoDropOverlay = document.getElementById('video-drop-overlay');
       const backdropModeLabel = document.getElementById('backdrop-mode-label');
       let customVideoObjectUrl = null;
+      let bgVideoActive = false;
 
       function updateBlur(val) {
         const numeric = parseFloat(val);
-        const clamped = Number.isNaN(numeric) ? 5 : Math.max(0, Math.min(20, numeric));
+        const clamped = Number.isNaN(numeric) ? 9 : Math.max(0, Math.min(24, numeric));
         document.documentElement.style.setProperty('--bg-blur', `${clamped}px`);
         if (blurValue) blurValue.textContent = `${clamped}px`;
       }
@@ -1841,8 +1921,88 @@
         blurSlider.addEventListener('input', (e) => updateBlur(e.target.value));
       }
 
+      // Lightweight live dark-but-bright galaxy canvas while MP4 buffers or if autoplay is paused
+      let galW = 1;
+      let galH = 1;
+      const galArms = Array.from({ length: 140 }, (_, i) => {
+        const arm = i % 3;
+        const frac = (i / 140);
+        const angle = arm * ((Math.PI * 2) / 3) + frac * 5.2 + (Math.sin(i * 12.9898) * 0.45);
+        const palette = [
+          [255, 226, 150],
+          [56, 218, 248],
+          [217, 70, 239],
+          [165, 180, 252],
+        ];
+        return {
+          angle,
+          radius: 0.05 + frac * 0.44,
+          size: 1.4 + (1 - frac) * 3.8,
+          col: palette[i % palette.length],
+          alpha: 0.25 + (1 - frac) * 0.55,
+        };
+      });
+
+      function resizeGalaxyFallback() {
+        if (!galaxyFallbackCanvas || !galaxyFallbackCtx) return;
+        const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+        galW = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+        galH = Math.max(1, window.innerHeight || document.documentElement.clientHeight || 1);
+        galaxyFallbackCanvas.width = Math.floor(galW * dpr);
+        galaxyFallbackCanvas.height = Math.floor(galH * dpr);
+        galaxyFallbackCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function renderGalaxyFallback(ts) {
+        if (!galaxyFallbackCtx || bgVideoActive) return;
+        if (galW <= 1 || galH <= 1) resizeGalaxyFallback();
+        const t = (ts || performance.now()) * 0.00018;
+        const cx = galW * 0.5;
+        const cy = galH * 0.48;
+        const span = Math.min(galW, galH);
+
+        galaxyFallbackCtx.globalCompositeOperation = 'source-over';
+        galaxyFallbackCtx.fillStyle = '#03040a';
+        galaxyFallbackCtx.fillRect(0, 0, galW, galH);
+
+        galaxyFallbackCtx.globalCompositeOperation = 'screen';
+        const blobs = [
+          { x: cx, y: cy, r: span * 0.42, c0: 'rgba(255, 224, 152, 0.45)', c1: 'rgba(245, 158, 11, 0.16)' },
+          { x: cx - span * 0.22 * Math.cos(t), y: cy - span * 0.12 * Math.sin(t), r: span * 0.46, c0: 'rgba(34, 211, 238, 0.34)', c1: 'rgba(59, 130, 246, 0.1)' },
+          { x: cx + span * 0.24 * Math.cos(t * 0.9), y: cy + span * 0.14 * Math.sin(t * 0.9), r: span * 0.48, c0: 'rgba(217, 70, 239, 0.32)', c1: 'rgba(129, 140, 248, 0.12)' },
+        ];
+        blobs.forEach((b) => {
+          const g = galaxyFallbackCtx.createRadialGradient(b.x, b.y, 4, b.x, b.y, b.r);
+          g.addColorStop(0, b.c0);
+          g.addColorStop(0.5, b.c1);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          galaxyFallbackCtx.fillStyle = g;
+          galaxyFallbackCtx.fillRect(0, 0, galW, galH);
+        });
+
+        for (let i = 0; i < galArms.length; i++) {
+          const st = galArms[i];
+          const a = st.angle + (prefersReducedMotion ? 0 : t * 0.55);
+          const x = cx + Math.cos(a) * st.radius * galW * 0.86;
+          const y = cy + Math.sin(a) * st.radius * galH * 0.72;
+          const g = galaxyFallbackCtx.createRadialGradient(x, y, 0, x, y, st.size * 3.5);
+          g.addColorStop(0, `rgba(${st.col[0]}, ${st.col[1]}, ${st.col[2]}, ${st.alpha.toFixed(2)})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          galaxyFallbackCtx.fillStyle = g;
+          galaxyFallbackCtx.beginPath();
+          galaxyFallbackCtx.arc(x, y, st.size * 3.5, 0, Math.PI * 2);
+          galaxyFallbackCtx.fill();
+        }
+
+        if (!prefersReducedMotion) {
+          requestAnimationFrame(renderGalaxyFallback);
+        }
+      }
+
       function markVideoReady(labelText) {
         if (!bgVideo) return;
+        bgVideo.classList.add('is-playing');
+        bgVideoActive = true;
         bgVideo.play().catch(() => {});
         if (backdropModeLabel && labelText) {
           backdropModeLabel.textContent = labelText;
@@ -1850,14 +2010,17 @@
       }
 
       if (bgVideo) {
+        bgVideo.addEventListener('playing', () => {
+          markVideoReady('Live Galaxy Video · 16 Destinations');
+        });
         bgVideo.addEventListener('loadeddata', () => {
-          markVideoReady('Live Cosmic Video · 15 Destinations');
+          markVideoReady('Live Galaxy Video · 16 Destinations');
         });
         bgVideo.addEventListener('canplay', () => {
-          markVideoReady('Live Cosmic Video · 15 Destinations');
+          markVideoReady('Live Galaxy Video · 16 Destinations');
         });
         if (bgVideo.readyState >= 2) {
-          markVideoReady('Live Cosmic Video · 15 Destinations');
+          markVideoReady('Live Galaxy Video · 16 Destinations');
         }
       }
 
@@ -1877,11 +2040,11 @@
           bgVideo
             .play()
             .then(() => {
-              markVideoReady('Custom Video Active · 15 Destinations');
+              markVideoReady('Custom Video Active · 16 Destinations');
               showToast(`Loaded "${file.name}"`, 2200);
             })
             .catch(() => {
-              markVideoReady('Custom Video Ready · 15 Destinations');
+              markVideoReady('Custom Video Ready · 16 Destinations');
             });
         } catch (err) {
           showToast('Could not load that video file', 2200);
@@ -2434,9 +2597,12 @@
         } else if (e.key === 'm' || e.key === 'M') {
           e.preventDefault();
           launchPortalCard(document.getElementById('portal-14'));
-        } else if (e.key === 'w' || e.key === 'W') {
+        } else if (e.key === 'a' || e.key === 'A') {
           e.preventDefault();
           launchPortalCard(document.getElementById('portal-15'));
+        } else if (e.key === 'w' || e.key === 'W') {
+          e.preventDefault();
+          launchPortalCard(document.getElementById('portal-16'));
         }
       });
 
@@ -2448,8 +2614,12 @@
       function startVisuals() {
         if (visualsStarted) return;
         visualsStarted = true;
+        resizeGalaxyFallback();
         resizeShootingCanvas();
         resizeSparkleCanvas();
+        if (!bgVideoActive) {
+          requestAnimationFrame(renderGalaxyFallback);
+        }
         requestAnimationFrame(renderShootingStars);
         requestAnimationFrame(renderInteractiveLoop);
       }
@@ -2457,6 +2627,7 @@
       window.addEventListener(
         'resize',
         () => {
+          if (!bgVideoActive) resizeGalaxyFallback();
           resizeShootingCanvas();
           resizeSparkleCanvas();
         },
